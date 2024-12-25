@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import raw from "mysql2";
 
 import User from "../models/User.js";
 import 'dotenv/config';
@@ -12,7 +13,7 @@ const getUserByToken = async (token) => {
 
   const userId = decoded.id;
 
-  const user = await User.findOne({ id: userId });
+  const user = await User.findOne({where: {id: userId}, raw: true});
 
   return user;
 };

@@ -10,6 +10,7 @@ import 'dotenv/config';
 import getUserByToken from '../middlewares/get-user-by-token.js'
 import getToken from '../middlewares/get-token.js'
 import createUserToken from '../middlewares/create-user-token.js'
+import { where } from 'sequelize';
 
 const userController = {
     register: async (req, res) => {
@@ -17,8 +18,10 @@ const userController = {
         const email = req.body.email
         const phone = req.body.phone
         const cpf = req.body.cpf
+        const role = req.body.role
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
+
 
         // validations
         if (!name) {
@@ -41,6 +44,11 @@ const userController = {
             return
         }
 
+        if (!role) {
+            res.status(422).json({ message: 'A permissão do usuário é obrigatória!' })
+            return
+        }
+
         if (!password) {
             res.status(422).json({ message: 'A senha é obrigatória!' })
             return
@@ -59,10 +67,10 @@ const userController = {
         }
 
         // check if user exists
-        const userExists = await User.findOne({where: {cpf: cpf}, raw: true})
+        const userExists = await User.findOne({ where: { email: email }, raw: true })
 
         if (userExists) {
-            res.status(422).json({ message: 'Por favor, utilize outro cpf!' })
+            res.status(422).json({ message: 'Por favor, utilize outro email!' })
             return
         }
 
@@ -70,17 +78,16 @@ const userController = {
         const salt = await bcrypt.genSalt(12)
         const passwordHash = await bcrypt.hash(password, salt)
 
-        // create user
-        const user = new User({
-            name: name,
-            email: email,
-            phone: phone,
-            cpf: cpf,
-            password: passwordHash,
-        })
-
         try {
-            const newUser = await User.save(user)
+            // create user
+            const newUser = await User.create({
+                name: name,
+                email: email,
+                phone: phone,
+                cpf: cpf,
+                password: passwordHash,
+                role: role,
+            });
 
             await createUserToken(newUser, req, res)
         } catch (error) {
@@ -103,7 +110,7 @@ const userController = {
         }
 
         // check if user exists
-        const user = await User.findOne({where: {email: email}, raw: true})
+        const user = await User.findOne({ where: { email: email }, raw: true })
 
         if (!user) {
             return res
@@ -130,20 +137,32 @@ const userController = {
             const token = getToken(req)
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
-            currentUser = await User.findById(decoded.id)
+            currentUser = await User.findOne({ where: { id: decoded.id }, raw: true })
+
+            if (!currentUser) {
+                res.status(404).json({ message: 'Usuário não encontrado!' });
+                return;
+            }
 
             currentUser.password = undefined
         } else {
             currentUser = null
         }
 
-        res.status(200).send(currentUser)
+        res.status(200).json({ user: currentUser })
     },
 
     getUserById: async (req, res) => {
         const id = req.params.id
 
-        const user = await User.findById(id)
+        const user = await User.findOne({ where: { id: id }, raw: true })
+
+        if (!user) {
+            res.status(404).json({ message: 'Usuário não encontrado!' });
+            return;
+        }
+
+        user.password = undefined
 
         if (!user) {
             res.status(422).json({ message: 'Usuário não encontrado!' })
@@ -167,6 +186,7 @@ const userController = {
         const name = req.body.name
         const email = req.body.email
         const phone = req.body.phone
+        const cpf = req.body.cpf
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
@@ -211,6 +231,13 @@ const userController = {
 
         user.phone = phone
 
+        if (!cpf) {
+            res.status(422).json({ message: 'O cpf é obrigatório!' })
+            return
+        }
+
+        user.cpf = cpf
+
         // check if password match
         if (password != confirmpassword) {
             res.status(422).json({ error: 'As senhas não conferem.' })
@@ -229,7 +256,7 @@ const userController = {
         try {
             // returns updated data
             const updatedUser = await User.findOneAndUpdate(
-                { _id: user._id },
+                { id: user.id },
                 { $set: user },
                 { new: true },
             )
