@@ -2,7 +2,7 @@ import express from "express"
 
 const router = express.Router();
 
-import UserController from "../controllers/userController.js"
+import UserController from "../controllers/UserController.js"
 
 // middlewares
 import verifyToken from "../middlewares/check-token.js";
