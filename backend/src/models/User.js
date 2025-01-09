@@ -33,9 +33,18 @@ const User = sequelize.define('User', {
     allowNull: false,
     defaultValue: 'user',
   },
+  image: {
+    type: DataTypes.STRING,
+    allowNull: true, // Imagem é opcional
+  },
+  // phone: {
+  //   type: DataTypes.STRING,
+  //   allowNull: false,
+  // },
 }, {
   timestamps: true, // Gera automaticamente os campos 'createdAt' e 'updatedAt'
   tableName: 'tb_users', // Nome da tabela no banco
 });
+
 
 export default User;

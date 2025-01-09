@@ -2,15 +2,17 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import raw from 'mysql2';
 
-import User from '../models/User.js'
+import {sequelize, User, Course, UserCourse} from '../models/associations.js'
 import 'dotenv/config';
 
 
 // helpers
-import getUserByToken from '../middlewares/get-user-by-token.js'
-import getToken from '../middlewares/get-token.js'
-import createUserToken from '../middlewares/create-user-token.js'
+import getUserByToken from '../helpers/get-user-by-token.js'
+import getToken from '../helpers/get-token.js'
+import createUserToken from '../helpers/create-user-token.js'
 import { where } from 'sequelize';
+import  {createUserWithCourses, updateProgress, getProgress, getUsersProgress}  from '../services/userService.js';
+
 
 const userController = {
     register: async (req, res) => {
@@ -19,10 +21,11 @@ const userController = {
         const phone = req.body.phone
         const cpf = req.body.cpf
         const role = req.body.role
+        const image = req.body.image
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
-
+        
         // validations
         if (!name) {
             res.status(422).json({ message: 'O nome é obrigatório!' })
@@ -80,13 +83,14 @@ const userController = {
 
         try {
             // create user
-            const newUser = await User.create({
+            const newUser = await createUserWithCourses({
                 name: name,
                 email: email,
                 phone: phone,
                 cpf: cpf,
                 password: passwordHash,
                 role: role,
+                image: image,
             });
 
             await createUserToken(newUser, req, res)
@@ -268,6 +272,57 @@ const userController = {
             res.status(500).json({ message: error })
         }
     },
+
+    getProgressInCourse: async (req, res) => {
+        // const userId = req.params.userId
+        const courseId = req.params.id
+        const token = getToken(req)
+        const user = await getUserByToken(token)
+        const userId = user.id
+        
+        if (!user || user.id!= userId) {
+            res.status(403).json({ message: 'Acesso não permitido!' })
+            return
+        }
+        
+        const progress = await getProgress(userId, courseId)
+        
+        if (!progress) {
+            res.status(404).json({ message: 'Progresso não encontrado!' })
+            return
+        }
+        
+        res.status(200).json({ progress })
+    },
+
+    updateProgressInCourse: async (req, res) => {
+        const courseId = req.params.id
+        const token = getToken(req)
+        const user = await getUserByToken(token)
+        const userId = user.id
+        const progress = req.body.progress
+        
+        if (!user || user.id != userId) {
+            res.status(403).json({ message: 'Acesso não permitido!' })
+            return
+        }
+        
+        await updateProgress(userId, courseId, progress)
+        
+        res.status(200).json({ message: 'Progresso atualizado com sucesso!' })
+    },
+
+    getUsersProgress: async (req, res) => {
+        console.log('buscando usuários com seus progressos')
+        const progress = await getUsersProgress();
+
+        if (!progress) {
+            res.status(404).json({ message: 'Progressos não encontrados!' });
+            return;
+        }
+
+        res.status(200).json({ progress });
+    }
 }
 
 export default userController;
