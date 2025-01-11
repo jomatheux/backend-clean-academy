@@ -68,7 +68,7 @@ const getCourseWithVideos = async (courseId) => {
         {
           model: Video,
           as: 'videos',
-          attributes: ['id', 'title', 'url', 'duration'], // Campos que deseja retornar
+          attributes: ['id', 'title', 'url', 'duration', 'image'], // Campos que deseja retornar
         },
       ],
     });
