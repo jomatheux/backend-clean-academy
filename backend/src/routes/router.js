@@ -9,8 +9,13 @@ router.use("/", userRouter);
 import courseRouter from './course.js';
 router.use("/courses", courseRouter);
 
+//Rotas de testes
 import testRouter from './test.js';
 router.use("/tests", testRouter);
+
+//Rotas de produtos
+import productRouter from './product.js';
+router.use("/products", productRouter);
 
 
 export default router;
