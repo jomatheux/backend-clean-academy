@@ -85,7 +85,7 @@ const getCourseWithVideos = async (courseId) => {
 }
 
 
-const addVideoToCourse = async (courseId, videoData) =>{
+const addVideoToCourse = async (courseId, videoData) => {
   try {
     const newVideo = await Video.create({
       ...videoData,
@@ -99,6 +99,13 @@ const addVideoToCourse = async (courseId, videoData) =>{
   }
 }
 
+const updateVideo = async (videoId, videoData) => {
+  const video = await Video.findByPk(videoId);
+  if(!video){
+      return res.status(404).json({error: 'Vídeo não encontrado!'})
+  }
+  const updatedVideo = await video.update(videoData);
+  return updatedVideo;
+}
 
-
-export { createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, addVideoToCourse};
+export { createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, addVideoToCourse, updateVideo };

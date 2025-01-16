@@ -1,7 +1,7 @@
 import getToken from '../helpers/get-token.js';
 import getUserByToken from '../helpers/get-user-by-token.js';
 import { sequelize, User, Course, UserCourse , Video} from '../models/associations.js'
-import {addVideoToCourse, createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos} from "../services/courseService.js"
+import {addVideoToCourse, createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, updateVideo} from "../services/courseService.js"
 
 
 const courseController = {
@@ -96,8 +96,27 @@ const courseController = {
         }
         await video.destroy()
         res.status(204).send()
-    }
+    },
 
+    updateVideoFromCourse: async (req, res) =>{
+        const {id} = req.params
+        const {title, description, duration, url} = req.body
+        try {
+            const updatedVideo = await updateVideo(id,{title, description, duration, url});
+            res.status(200).json(updatedVideo, {message: 'Vídeo atualizado com sucesso!'});
+        } catch (error) {
+            res.status(404).json(`Erro ao atualizar vídeo: ${error}`)
+        }        
+    },
+
+    getVideo: async (req, res) =>{
+        const {id} = req.params
+        const video = await Video.findByPk(id)
+        if(!video){
+            return res.status(404).json({error: 'Vídeo não encontrado!'})
+        }
+        res.status(200).json(video)
+    }
 }
 
 export default courseController;
