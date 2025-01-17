@@ -60,14 +60,13 @@ const courseController = {
         const { id } = req.params;
         const course = await Course.findByPk(id);
         const userCourse = await UserCourse.findAll({where: { courseId: id}});
-        if (!course) {
-            return res.status(404).json({ error: 'Curso não encontrado!' });
-        }
-        if (!userCourse) {
+        const video = await Video.findAll({where: { courseId: id}});
+        if (!course ||!userCourse ||!video) {
             return res.status(400).json({ error: 'Erro na deleção' });
         }
         await course.destroy();
         await userCourse.map(uc => uc.destroy());
+        await video.map(v => v.destroy());
         res.status(204).send();
     },
 
