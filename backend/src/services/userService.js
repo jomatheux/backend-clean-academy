@@ -88,7 +88,7 @@ const getUsersProgress = async () => {
       };
     });
 
-    return formattedProgress;
+    return usersProgress;
   } catch (error) {
     console.error('Erro ao recuperar o progresso dos usuários:', error);
     throw error;

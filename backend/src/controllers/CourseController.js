@@ -99,7 +99,7 @@ const courseController = {
     },
 
     updateVideoFromCourse: async (req, res) =>{
-        const {id} = req.params
+        const {id} = req.params.id
         const videoData = req.body
         const video = await Video.findByPk(id)
         if(!video){
