@@ -75,20 +75,22 @@ const getUsersProgress = async () => {
         },
       ],
     });
+    // Seleciona o total de cursos existentes
+    const totalCourses = await Course.findAll();
 
     // Processa os dados para calcular o número de cursos completos e incompletos
     const formattedProgress = usersProgress.map(user => {
       const completedCourses = user.userCourses.filter(uc => uc.progress === 100).length;
-      const incompleteCourses = user.userCourses.filter(uc => uc.progress < 100).length;
+      const tc = totalCourses.length;
 
       return {
         id: user.id,
         name: user.name,
-        progress: `${completedCourses}/${incompleteCourses}`, // Formato desejado
+        progress: `${completedCourses}/${tc}`, // Formato desejado
       };
     });
 
-    return usersProgress;
+    return formattedProgress;
   } catch (error) {
     console.error('Erro ao recuperar o progresso dos usuários:', error);
     throw error;

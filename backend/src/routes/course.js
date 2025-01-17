@@ -10,7 +10,7 @@ router.post("/addvideo/:id", CourseController.addVideoToCourse); //admin
 
 router.delete("/deletevideo/:id", CourseController.deleteVideoFromCourse); //admin
 
-router.patch("update/video/:id", CourseController.updateVideoFromCourse); //admin
+router.patch("/update/video/:id", CourseController.updateVideoFromCourse); //admin
 
 router.get("/video/:id", CourseController.getVideo); //admin
 

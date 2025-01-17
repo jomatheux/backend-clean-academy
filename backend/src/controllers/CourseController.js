@@ -59,10 +59,15 @@ const courseController = {
     deleteCourseById: async (req, res) => {
         const { id } = req.params;
         const course = await Course.findByPk(id);
+        const userCourse = await UserCourse.findAll({where: { courseId: id}});
         if (!course) {
             return res.status(404).json({ error: 'Curso não encontrado!' });
         }
+        if (!userCourse) {
+            return res.status(400).json({ error: 'Erro na deleção' });
+        }
         await course.destroy();
+        await userCourse.map(uc => uc.destroy());
         res.status(204).send();
     },
 
@@ -99,7 +104,7 @@ const courseController = {
     },
 
     updateVideoFromCourse: async (req, res) =>{
-        const {id} = req.params.id
+        const id = req.params.id
         const videoData = req.body
         const video = await Video.findByPk(id)
         if(!video){
