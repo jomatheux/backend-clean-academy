@@ -12,7 +12,7 @@ router.delete("/deletevideo/:id", CourseController.deleteVideoFromCourse); //adm
 
 router.patch("/update/video/:id", CourseController.updateVideoFromCourse); //admin
 
-router.get("/video/:id", CourseController.getVideo); //admin
+router.get("/video/:id", CourseController.getVideo);
 
 router.get("/all", CourseController.getAllCourses);
 

@@ -1,7 +1,7 @@
-import Product from "../models/Product.js";
+import {Product} from "../models/associations.js";
 
-const createProduct = (product) =>{
-    return Product.create(product);
+const createProduct = (courseId, product) =>{
+    return Product.create({...product, courseId});
 }
 
 const getAllProducts = () => {
