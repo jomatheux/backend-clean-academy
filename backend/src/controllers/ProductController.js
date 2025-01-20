@@ -25,7 +25,7 @@ const productController = {
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
-        const image = `src/public/products/${req.file.filename}`;
+        const image = `backend/src/public/products/${req.file.filename}`;
         console.log(image);
         console.log(req.file);
 
@@ -36,6 +36,7 @@ const productController = {
     // Retornar todos os produtos
     getAllProducts: async (req, res) => {
         const products = await getAllProducts();
+        console.log(products);
         if (!products) return res.status(404).json("Nenhum produto encontrado.");
         res.json(products)
     },
