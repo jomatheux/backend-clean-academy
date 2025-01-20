@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
     if (req.baseUrl.includes('products')) {
       folder = "products";
     }
-    cb(null, path.join(__dirname, `../public/${folder}/`));
+    cb(null, path.join(__dirname, `../storage/${folder}/`));
   },
   filename: function (req, file, cb) {
     cb(null, Date.now() + path.extname(file.originalname));
