@@ -25,7 +25,7 @@ const productController = {
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
-        const image = `/storage/products/${req.file.filename}`;
+        const image = `product/${req.file.filename}`;
         console.log(image);
         console.log(req.file);
 
@@ -79,7 +79,23 @@ const productController = {
         const deletedProduct = await deleteProduct(id);
         if (!deletedProduct) return res.status(404).json("Produto não encontrado.");
         res.status(204).send()
-    }
+    },
+
+    // Retornar todos os produtos de um curso específico
+    getCourseProducts: async (req, res) => {
+        const { id } = req.params;
+        const products = await Product.findAll({ where: { courseId: id } });
+        if (!products) return res.status(404).json("Nenhum produto encontrado.");
+        res.json(products)
+    },
+
+    // Retornar um produto específico de um curso específico
+    getCourseProductById: async (req, res) => {
+        const { courseId, productId } = req.params;
+        const product = await Product.findByPk(productId, { where: { courseId: courseId } });
+        if (!product) return res.status(404).json("Produto não encontrado.");
+        res.json(product)
+    },
 }
 
 export default productController;
