@@ -25,7 +25,7 @@ const productController = {
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
-        const image = `/products/${req.file.filename}`;
+        const image = `/storage/products/${req.file.filename}`;
         console.log(image);
         console.log(req.file);
 
