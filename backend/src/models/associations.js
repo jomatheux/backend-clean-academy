@@ -40,4 +40,4 @@ Report.belongsTo(User, { foreignKey: 'userId', as: 'users' });
 
 
 // Exportar os modelos e a instância do Sequelize
-export { sequelize, User, Course, UserCourse, Video , Product};
+export { sequelize, User, Course, UserCourse, Video, Product };

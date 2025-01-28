@@ -6,9 +6,10 @@ import TestController from "../controllers/TestController.js";
 
 router.post('/create', TestController.createTest); //admin
 router.get('/all', TestController.getAllTests);
-router.get('/:id', TestController.getAttemptsByTest); 
+router.get('/:id', TestController.getAttemptsByTest);
 router.post('/taketest', TestController.takeTest);
-router.get('/getByCourseId/:id', TestController.getTestByCourseId);  
+router.post('/releasetest/:id', TestController.releaseTest); //admin
+router.get('/getByCourseId/:id', TestController.getTestByCourseId);
 router.get('/getByUserToken', TestController.getTestByUserToken);
 
 export default router;

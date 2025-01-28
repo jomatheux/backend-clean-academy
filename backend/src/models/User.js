@@ -1,5 +1,5 @@
 import { DataTypes } from 'sequelize';
-import sequelize from'../config/db.js'; // Certifique-se de ajustar o caminho para o arquivo de configuração do banco
+import sequelize from '../config/db.js'; // Certifique-se de ajustar o caminho para o arquivo de configuração do banco
 
 const User = sequelize.define('User', {
   id: {

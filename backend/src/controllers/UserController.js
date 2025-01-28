@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import raw from 'mysql2';
 
-import {sequelize, User, Course, UserCourse} from '../models/associations.js'
+import { sequelize, User, Course, UserCourse } from '../models/associations.js'
 import 'dotenv/config';
 
 
@@ -11,7 +11,7 @@ import getUserByToken from '../helpers/get-user-by-token.js'
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
 import { where } from 'sequelize';
-import  {createUserWithCourses, updateProgress, getProgress, getUsersProgress}  from '../services/userService.js';
+import { createUserWithCourses, updateProgress, getProgress, getUsersProgress } from '../services/userService.js';
 
 
 const userController = {
@@ -25,7 +25,7 @@ const userController = {
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
-        
+
         // validations
         if (!name) {
             res.status(422).json({ message: 'O nome é obrigatório!' })
@@ -279,19 +279,19 @@ const userController = {
         const token = getToken(req)
         const user = await getUserByToken(token)
         const userId = user.id
-        
-        if (!user || user.id!= userId) {
+
+        if (!user || user.id != userId) {
             res.status(403).json({ message: 'Acesso não permitido!' })
             return
         }
-        
+
         const progress = await getProgress(userId, courseId)
-        
+
         if (!progress) {
             res.status(404).json({ message: 'Progresso não encontrado!' })
             return
         }
-        
+
         res.status(200).json({ progress })
     },
 
@@ -301,14 +301,14 @@ const userController = {
         const user = await getUserByToken(token)
         const userId = user.id
         const progress = req.body.progress
-        
+
         if (!user || user.id != userId) {
             res.status(403).json({ message: 'Acesso não permitido!' })
             return
         }
-        
+
         await updateProgress(userId, courseId, progress)
-        
+
         res.status(200).json({ message: 'Progresso atualizado com sucesso!' })
     },
 

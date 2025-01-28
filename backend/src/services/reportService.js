@@ -1,5 +1,5 @@
-import Report from '../models/Report.js';
-import Test from '../models/Test.js';
+import Report from '../models/associations.js';
+import Test from '../models/associations.js';
 
 async function generateReport(userId, testId, receivedGrade) {
     try {
@@ -24,7 +24,7 @@ async function getReportOfUser(userId) {
             include: [
                 {
                     model: Test,
-                    as: 'prova',
+                    as: 'test',
                     attributes: ['id', 'minGrade', 'courseId'],
                 },
             ],
@@ -49,7 +49,7 @@ async function registerAttempt(userId, testId, receivedGrade) {
         const currentAttempt = lastAttempt ? lastAttempt.attempt + 1 : 1;
 
         // Criar o novo relatório
-        const report = await RelatorioDesempenho.create({
+        const report = await Report.create({
             userId,
             testId,
             grade: receivedGrade,

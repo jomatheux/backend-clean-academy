@@ -1,8 +1,8 @@
-import UserCourse from '../models/UserCourse.js';
-import Test from '../models/Test.js';
+import UserCourse from '../models/associations.js';
+import Test from '../models/associations.js';
 import { registerAttempt } from './reportService.js';
-import Report from '../models/Report.js';
-import Course from '../models/Course.js';
+import Report from '../models/associations.js';
+import Course from '../models/associations.js';
 
 async function releaseTest(userId, courseId) {
   try {
@@ -20,16 +20,16 @@ async function releaseTest(userId, courseId) {
     }
 
     // Buscar a Test associada ao curso
-    const Test = await Test.findOne({
+    const test = await Test.findOne({
       where: { courseId },
       attributes: ['id', 'questoes', 'notaMinima'],
     });
 
-    if (!Test) {
+    if (!test) {
       return { error: 'Test não encontrada para este curso.' };
     }
 
-    return Test;
+    return test;
   } catch (error) {
     console.error('Erro ao verificar liberação da Test:', error);
     throw error;
@@ -140,7 +140,7 @@ async function getTestByUserId(userId) {
       return { message: 'Nenhuma prova encontrada para este usuário.' };
     }
     return test;
-  }catch(error){
+  } catch (error) {
     console.error('Erro ao buscar a prova:', error);
     throw error;
   }

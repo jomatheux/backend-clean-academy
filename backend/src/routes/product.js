@@ -17,7 +17,7 @@ router.get('/:id', ProductController.getProductById);
 
 router.get('/course/:id', ProductController.getCourseProducts);
 
-router.patch('/edit/:id',upload.single("image"), ProductController.updateProduct); //admin
+router.patch('/edit/:id', upload.single("image"), ProductController.updateProduct); //admin
 
 router.delete('/delete/:id', ProductController.deleteProduct); //admin
 

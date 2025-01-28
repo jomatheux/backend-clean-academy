@@ -16,7 +16,7 @@ router.get("/:id", UserController.getUserById); //admin
 router.get("/progress/:id", UserController.getProgressInCourse);
 router.post("/progress/:id", UserController.updateProgressInCourse);
 router.get("/users/progress", UserController.getUsersProgress); //admin
-router.post("/users/auth",authorizeAdmin); //admin
+router.post("/users/auth", authorizeAdmin); //admin
 // router.patch(
 //   "/edit/:id",
 //   verifyToken,
