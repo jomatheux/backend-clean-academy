@@ -1,8 +1,8 @@
-import UserCourse from '../models/associations.js';
-import Test from '../models/associations.js';
+import { UserCourse } from '../models/associations.js';
+import { Test } from '../models/associations.js';
 import { registerAttempt } from './reportService.js';
-import Report from '../models/associations.js';
-import Course from '../models/associations.js';
+import { Report } from '../models/associations.js';
+import { Course } from '../models/associations.js';
 
 async function releaseTest(userId, courseId) {
   try {

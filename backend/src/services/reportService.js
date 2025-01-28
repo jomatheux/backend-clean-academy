@@ -1,5 +1,5 @@
-import Report from '../models/associations.js';
-import Test from '../models/associations.js';
+import { Report } from '../models/associations.js';
+import { Test } from '../models/associations.js';
 
 async function generateReport(userId, testId, receivedGrade) {
     try {
