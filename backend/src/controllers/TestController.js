@@ -20,7 +20,7 @@ const testController = {
 
     getAttemptsByTest: async (req, res) => {
         const token = getToken(req);
-        const user = await getUserByToken(token);
+        const user = await getUserByToken(token, req, res);
         const testId = req.params.id;
         const attempts = await getAttemptsByTest(testId, user.id);
         if (!attempts) return res.status(404).json("Tentativas não encontradas")
@@ -28,8 +28,8 @@ const testController = {
     },
 
     takeTest: async (req, res) => {
-        const token = getToken(token);
-        const user = await getUserByToken(token);
+        const token = getToken(req);
+        const user = await getUserByToken(token, req, res);
         const testId = req.params.id;
         const receivedGrade = req.body.receivedGrade
 
@@ -40,8 +40,8 @@ const testController = {
     },
 
     releaseTest: async (req, res) => {
-        const token = getToken(token);
-        const user = await getUserByToken(token);
+        const token = getToken(req);
+        const user = await getUserByToken(token, req, res);
         const courseId = req.params.id;
 
         const test = releaseTest(user.id, courseId);
