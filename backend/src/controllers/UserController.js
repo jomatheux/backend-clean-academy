@@ -11,7 +11,7 @@ import getUserByToken from '../helpers/get-user-by-token.js'
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
 import { where } from 'sequelize';
-import { createUserWithCourses, updateProgress, getProgress, getUsersProgress } from '../services/userService.js';
+import { createUserWithCourses, updateProgress, getProgress, getUsersProgress, getUserProgressInCoursesByUserId } from '../services/userService.js';
 
 
 const userController = {
@@ -321,6 +321,21 @@ const userController = {
             return;
         }
 
+        res.status(200).json({ progress });
+    },
+
+    getUserProgressInAllCoursesByUserId: async (req, res) => {
+        const userId = req.params.id
+        const user = await User.findOne({ where: { id: userId }, raw: true })
+        if (!user) {
+            res.status(422).json({ message: 'O usuário não encontrado.' })
+            return
+        }
+        const progress = await getUserProgressInCoursesByUserId(userId);
+        if (!progress) {
+            res.status(404).json({ message: 'Progressos não encontrados!' });
+            return;
+        }
         res.status(200).json({ progress });
     }
 }

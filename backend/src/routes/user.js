@@ -14,6 +14,7 @@ router.post("/login", UserController.login);
 router.get("/checkuser", UserController.checkUser);
 router.get("/:id", UserController.getUserById); //admin
 router.get("/progress/:id", UserController.getProgressInCourse);
+router.get("/users/progress/:id", UserController.getUserProgressInAllCoursesByUserId); //admin
 router.post("/progress/:id", UserController.updateProgressInCourse);
 router.get("/users/progress", UserController.getUsersProgress); //admin
 router.post("/users/auth", authorizeAdmin); //admin

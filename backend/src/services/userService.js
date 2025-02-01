@@ -1,3 +1,4 @@
+import { where } from 'sequelize';
 import { User, Course, UserCourse } from '../models/associations.js'
 
 const createUserWithCourses = async (userData) => {
@@ -97,4 +98,35 @@ const getUsersProgress = async () => {
   }
 }
 
-export { createUserWithCourses, updateProgress, getProgress, getUsersProgress };
+const getUserProgressInCoursesByUserId = async (userId) => {
+  console.log('Buscando cursos do usuário com ID:', userId);
+  try {
+    const userCourses = await UserCourse.findAll({
+      where: { userId }, // Filtra pelo ID do usuário na tabela intermediária
+      include: [
+        {
+          model: Course,
+          as: 'course', // Nome do alias na relação
+          attributes: ['id', 'title', 'description'], // Campos que queremos do modelo Course
+        },
+      ],
+    });
+
+    if (userCourses.length === 0) {
+      return { error: 'Nenhum curso encontrado para este usuário.' };
+    }
+
+    // Retorna os cursos com o progresso
+    return userCourses.map((userCourse) => ({
+      courseId: userCourse.course.id,
+      title: userCourse.course.title,
+      description: userCourse.course.description,
+      progress: userCourse.progress,
+    }));
+  } catch (error) {
+    console.error('Erro ao buscar cursos do usuário:', error);
+    throw error;
+  };
+};
+
+export { createUserWithCourses, updateProgress, getProgress, getUsersProgress, getUserProgressInCoursesByUserId };
