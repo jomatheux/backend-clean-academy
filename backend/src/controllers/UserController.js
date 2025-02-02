@@ -322,8 +322,9 @@ const userController = {
     getUserProgressInAllCoursesByUserId: async (req, res) => {
         const userId = req.params.id
         const user = await User.findOne({ where: { id: userId }, raw: true })
+        user.password = undefined
         if (!user) {
-            res.status(422).json({ message: 'O usuário não encontrado.' })
+            res.status(422).json({ message: 'Usuário não encontrado.' })
             return
         }
         const progress = await getUserProgressInCoursesByUserId(userId);
@@ -331,7 +332,7 @@ const userController = {
             res.status(404).json({ message: 'Progressos não encontrados!' });
             return;
         }
-        res.status(200).json({ progress });
+        res.status(200).json({user, progress });
     }
 }
 
