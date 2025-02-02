@@ -17,5 +17,9 @@ router.use("/tests", testRouter);
 import productRouter from './product.js';
 router.use("/products", productRouter);
 
+//Rotas de relatórios
+import reportRouter from './report.js';
+router.use("/reports", reportRouter);
+
 
 export default router;

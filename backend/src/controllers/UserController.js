@@ -1,16 +1,11 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import raw from 'mysql2';
-
-import { sequelize, User, Course, UserCourse } from '../models/associations.js'
+import { User } from '../models/associations.js'
 import 'dotenv/config';
-
-
 // helpers
 import getUserByToken from '../helpers/get-user-by-token.js'
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
-import { where } from 'sequelize';
 import { createUserWithCourses, updateProgress, getProgress, getUsersProgress, getUserProgressInCoursesByUserId } from '../services/userService.js';
 
 
@@ -181,7 +176,7 @@ const userController = {
 
         //console.log(token);
 
-        const user = await getUserByToken(token)
+        const user = await getUserByToken(req, res, token)
 
         // console.log(user);
         // console.log(req.body)
@@ -277,7 +272,7 @@ const userController = {
         // const userId = req.params.userId
         const courseId = req.params.id
         const token = getToken(req)
-        const user = await getUserByToken(token)
+        const user = await getUserByToken(req, res, token)
         const userId = user.id
 
         if (!user || user.id != userId) {
@@ -298,7 +293,7 @@ const userController = {
     updateProgressInCourse: async (req, res) => {
         const courseId = req.params.id
         const token = getToken(req)
-        const user = await getUserByToken(token)
+        const user = await getUserByToken(req, res, token)
         const userId = user.id
         const progress = req.body.progress
 

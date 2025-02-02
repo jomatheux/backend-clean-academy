@@ -9,7 +9,7 @@ const authorizeAdmin = async (req, res, next) => { // 'roles' é um array de rol
   if (!token) {
     return res.status(401).json({ mensagem: 'Acesso negado.' }); // Segurança extra
   }
-  const user = await getUserByToken(token);
+  const user = await getUserByToken(req, res, token);
 
   if (!user) {
     return res.status(401).json({ mensagem: 'Usuário não autenticado.' }); // Segurança extra

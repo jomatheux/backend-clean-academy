@@ -59,7 +59,7 @@ const testController = {
     getTestByUserToken: async (req, res) => {
         const token = getToken(req);
         if (!token) return res.status(404).json({ error: "Acesso não autorizado!" });
-        const user = await getUserByToken(token);
+        const user = await getUserByToken(req, res, token);
         const test = await getTestByUserId(user.id);
         if (!test) return res.status(404).json("Teste não encontrado");
         res.status(200).json(test)

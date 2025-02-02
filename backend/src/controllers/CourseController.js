@@ -1,7 +1,7 @@
 import getToken from '../helpers/get-token.js';
 import getUserByToken from '../helpers/get-user-by-token.js';
-import { sequelize, User, Course, UserCourse , Video} from '../models/associations.js'
-import {addVideoToCourse, createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos } from "../services/courseService.js"
+import { sequelize, User, Course, UserCourse, Video } from '../models/associations.js'
+import { addVideoToCourse, createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos } from "../services/courseService.js"
 
 
 const courseController = {
@@ -59,9 +59,9 @@ const courseController = {
     deleteCourseById: async (req, res) => {
         const { id } = req.params;
         const course = await Course.findByPk(id);
-        const userCourse = await UserCourse.findAll({where: { courseId: id}});
-        const video = await Video.findAll({where: { courseId: id}});
-        if (!course ||!userCourse ||!video) {
+        const userCourse = await UserCourse.findAll({ where: { courseId: id } });
+        const video = await Video.findAll({ where: { courseId: id } });
+        if (!course || !userCourse || !video) {
             return res.status(400).json({ error: 'Erro na deleção' });
         }
         await course.destroy();
@@ -92,32 +92,32 @@ const courseController = {
         }
     },
 
-    deleteVideoFromCourse: async (req, res) =>{
-        const {id} = req.params
+    deleteVideoFromCourse: async (req, res) => {
+        const { id } = req.params
         const video = await Video.findByPk(id)
-        if(!video){
-            return res.status(404).json({error: 'Vídeo não encontrado!'})
+        if (!video) {
+            return res.status(404).json({ error: 'Vídeo não encontrado!' })
         }
         await video.destroy()
         res.status(204).send()
     },
 
-    updateVideoFromCourse: async (req, res) =>{
+    updateVideoFromCourse: async (req, res) => {
         const id = req.params.id
         const videoData = req.body
         const video = await Video.findByPk(id)
-        if(!video){
-            return res.status(404).json({error: 'Vídeo não encontrado!'})
+        if (!video) {
+            return res.status(404).json({ error: 'Vídeo não encontrado!' })
         }
         await video.update(videoData)
-        res.status(200).json(video)   
+        res.status(200).json(video)
     },
 
-    getVideo: async (req, res) =>{
-        const {id} = req.params
+    getVideo: async (req, res) => {
+        const { id } = req.params
         const video = await Video.findByPk(id)
-        if(!video){
-            return res.status(404).json({error: 'Vídeo não encontrado!'})
+        if (!video) {
+            return res.status(404).json({ error: 'Vídeo não encontrado!' })
         }
         res.status(200).json(video)
     }
