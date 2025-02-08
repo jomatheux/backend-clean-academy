@@ -18,11 +18,9 @@ router.get("/users/progress/:id", UserController.getUserProgressInAllCoursesByUs
 router.post("/progress/:id", UserController.updateProgressInCourse);
 router.get("/users/progress", UserController.getUsersProgress); //admin
 router.post("/users/auth", authorizeAdmin); //admin
-// router.patch(
-//   "/edit/:id",
-//   verifyToken,
-//   imageUpload.single("image"),
-//   UserController.editUser
-// );
+router.patch(
+    "/edit/:id",
+    UserController.editUserById); //admin
+router.delete("/delete/:id", UserController.deleteUserById); //admin
 
 export default router;

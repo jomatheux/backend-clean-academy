@@ -27,6 +27,23 @@ const createUserWithCourses = async (userData) => {
   }
 };
 
+const deleteUserById = async (userId) => {
+  try {
+    const user = await User.findByPk(userId);
+    const deletedUser = user;
+    const userCourse = await UserCourse.findAll({ where: { userId: user.id } });
+    if (user) {
+      await user.destroy();
+      await userCourse.map(uc => uc.destroy());
+      return deletedUser;
+    } else {
+      console.log('Usuário não encontrado.');
+    }
+  } catch (error) {
+    console.error('Erro ao deletar usuário:', error);
+  }
+}
+
 const updateProgress = async (userId, courseId, newProgress) => {
   try {
     const userCourse = await UserCourse.findOne({ where: { userId, courseId } });
@@ -129,4 +146,4 @@ const getUserProgressInCoursesByUserId = async (userId) => {
   };
 };
 
-export { createUserWithCourses, updateProgress, getProgress, getUsersProgress, getUserProgressInCoursesByUserId };
+export { createUserWithCourses, updateProgress, deleteUserById, getProgress, getUsersProgress, getUserProgressInCoursesByUserId };

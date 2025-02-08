@@ -6,7 +6,7 @@ import 'dotenv/config';
 import getUserByToken from '../helpers/get-user-by-token.js'
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
-import { createUserWithCourses, updateProgress, getProgress, getUsersProgress, getUserProgressInCoursesByUserId } from '../services/userService.js';
+import { createUserWithCourses, updateProgress, deleteUserById, getProgress, getUsersProgress, getUserProgressInCoursesByUserId } from '../services/userService.js';
 
 
 const userController = {
@@ -171,12 +171,14 @@ const userController = {
         res.status(200).json({ user })
     },
 
-    editUser: async (req, res) => {
-        const token = getToken(req)
+    editUserById: async (req, res) => {
 
-        //console.log(token);
+        const user = await User.findByPk(req.params.id);
 
-        const user = await getUserByToken(req, res, token)
+        if (!user) {
+            res.status(404).json({ message: 'Usuário não encontrado!' });
+            return;
+        }
 
         // console.log(user);
         // console.log(req.body)
@@ -184,16 +186,13 @@ const userController = {
 
         const name = req.body.name
         const email = req.body.email
-        const phone = req.body.phone
         const cpf = req.body.cpf
+        const role = req.body.role
+        const image = req.body.image
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
-        let image = ''
-
-        if (req.file) {
-            image = req.file.filename
-        }
+        // console.log(req.body)
 
         // validations
         if (!name) {
@@ -209,7 +208,7 @@ const userController = {
         }
 
         // check if user exists
-        const userExists = await User.findOne({ email: email })
+        const userExists = await User.findOne({ where: { email: email } })
 
         if (user.email !== email && userExists) {
             res.status(422).json({ message: 'Por favor, utilize outro e-mail!' })
@@ -219,16 +218,16 @@ const userController = {
         user.email = email
 
         if (image) {
-            const imageName = req.file.filename
+            const imageName = req.body.image
             user.image = imageName
         }
 
-        if (!phone) {
-            res.status(422).json({ message: 'O telefone é obrigatório!' })
+        if (!role) {
+            res.status(422).json({ message: 'O tipo de usuário é obrigatório!' })
             return
         }
 
-        user.phone = phone
+        user.role = role
 
         if (!cpf) {
             res.status(422).json({ message: 'O cpf é obrigatório!' })
@@ -254,17 +253,38 @@ const userController = {
 
         try {
             // returns updated data
-            const updatedUser = await User.findOneAndUpdate(
-                { id: user.id },
-                { $set: user },
-                { new: true },
-            )
+            const updatedUser = await user.update({
+                name: user.name,
+                email: user.email,
+                cpf: user.cpf,
+                role: user.role,
+                image: user.image,
+                password: user.password
+            })
+            updatedUser.password = undefined
             res.json({
                 message: 'Usuário atualizado com sucesso!',
-                data: updatedUser,
+                updatedUser: updatedUser,
             })
         } catch (error) {
             res.status(500).json({ message: error })
+        }
+    },
+
+    deleteUserById: async (req, res) => {
+        const id = req.params.id;
+
+        const user = await User.findOne({ where: { id: id }, raw: true })
+        if (!user) {
+            res.status(404).json({ message: 'Usuário não encontrado!' });
+            return;
+        }
+        const deletedUser = await deleteUserById(user.id);
+        deletedUser.password = undefined
+        if (deletedUser) {
+            res.status(200).json({ message: 'Usuário excluído com sucesso!', user: deletedUser });
+        } else {
+            res.status(500).json({ message: 'Falha ao excluir o usuário.' })
         }
     },
 
@@ -332,7 +352,7 @@ const userController = {
             res.status(404).json({ message: 'Progressos não encontrados!' });
             return;
         }
-        res.status(200).json({user, progress });
+        res.status(200).json({ user, progress });
     }
 }
 
