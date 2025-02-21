@@ -2,6 +2,7 @@ import { DataTypes } from 'sequelize';
 import sequelize from '../config/db.js';
 import User from './User.js';
 import Course from './Course.js';
+import Video from './Video.js';
 
 const UserCourse = sequelize.define('UserCourse', {
   id: {
@@ -11,9 +12,14 @@ const UserCourse = sequelize.define('UserCourse', {
     allowNull: false,
   },
   progress: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.DOUBLE,
     allowNull: false,
     defaultValue: 0, // Progresso inicial é 0%
+  },
+  watchedVideos: {
+    type: DataTypes.JSON,
+    allowNull: false,
+    defaultValue: [], // Lista de vídeos assistidos
   },
 }, {
   timestamps: true,

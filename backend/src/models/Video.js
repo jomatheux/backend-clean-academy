@@ -26,7 +26,7 @@ const Video = sequelize.define('Video', {
   image: {
     type: DataTypes.STRING,
     allowNull: true, // URL da imagem do vídeo (pode ser local ou hospedado em algum serviço)
-  }
+  },
 }, {
   timestamps: true,
   tableName: 'tb_videos',

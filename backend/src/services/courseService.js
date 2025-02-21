@@ -91,13 +91,103 @@ const addVideoToCourse = async (courseId, videoData) => {
       ...videoData,
       courseId,
     });
+    // Atualiza o progresso do curso
+    try {
+      // Verifica se o relacionamento usuário-curso existe e guarda ele em uma variável
+      const userCourse = await UserCourse.findAll({ where: { courseId } });
+      if (!userCourse) {
+        console.log('Relacionamento usuário-curso não encontrado.');
+        return;
+      }
+      // Verifica se o vídeo existe
+      const video = await Video.findByPk(newVideo.id);
+      if (!video) {
+        console.log('Vídeo não encontrado.');
+        return;
+      }
+      // Atualiza o progresso no relacionamento usuário-curso
+      if (userCourse) {
+        userCourse.forEach(async (uc) => {
+          // Busca o curso com os vídeos para calcular o progresso atual
+          const courseWithVideos = await getCourseWithVideos(courseId);
+          const totalVideos = courseWithVideos.videos.length;
+          const completedVideos = uc.watchedVideos.length;
+          // Calcula o novo progresso do curso e atualiza o relacionamento
+          const newProgress = Math.round((completedVideos / totalVideos) * 100);
+          console.log(`Novo progresso: ${newProgress}%`);
+          uc.progress = newProgress;
+          await uc.save();
+        });
+
+        console.log('Progresso atualizado com sucesso!');
+      } else {
+        console.log('Relacionamento usuário-curso não encontrado.');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar progresso:', error);
+    }
+
     console.log('Vídeo adicionado com sucesso:', newVideo);
+
     return newVideo;
   } catch (error) {
     console.error('Erro ao adicionar vídeo:', error);
     throw error;
   }
-}
+};
+
+const deleteVideo = async (videoId) => {
+  try {
+    const video = await Video.findByPk(videoId);
+    if (!video) {
+      console.log('Vídeo não encontrado.');
+      return;
+    }
+    const courseId = video.courseId;
+    // Verifica se o relacionamento usuário-curso existe e guarda ele em uma variável
+    const userCourse = await UserCourse.findAll({ where: { courseId } });
+    if (!userCourse) {
+      console.log('Relacionamento usuário-curso não encontrado.');
+      return;
+    }
+    // Deleta o vídeo
+    await video.destroy();
+    console.log('Vídeo deletado com sucesso!');
+    // Atualiza o progresso do curso
+    try {
+      // Atualiza o progresso no relacionamento usuário-curso
+      if (userCourse) {
+        // Busca o curso com os vídeos para calcular o progresso atual
+        userCourse.forEach(async (uc) => {
+          // Verifica se o video deletado estava na lista de videos assistidos
+          if (uc.watchedVideos.includes(videoId)) {
+            // Remove o video deletado da lista de videos assistidos
+            uc.watchedVideos = uc.watchedVideos.filter(v => v !== videoId);
+          }
+          // Busca o curso com os vídeos para calcular o progresso atual
+          const courseWithVideos = await getCourseWithVideos(courseId);
+          const totalVideos = courseWithVideos.videos.length;
+          const completedVideos = uc.watchedVideos.length;
+          // Calcula o novo progresso do curso e atualiza o relacionamento
+          const newProgress = Math.round((completedVideos / totalVideos) * 100);
+          console.log(`Novo progresso: ${newProgress}%`);
+          uc.progress = newProgress;
+          await uc.save();
+        });
+
+        console.log('Progresso atualizado com sucesso!');
+      } else {
+        console.log('Relacionamento usuário-curso não encontrado.');
+      }
+    } catch (error) {
+      console.error('Erro ao atualizar progresso:', error);
+    }
+    //Retorna o video deletado
+    return video;
+  } catch (error) {
+    console.error('Erro ao deletar vídeo:', error);
+  }
+};
 
 const getProgress = async (userId, courseId) => {
   try {
@@ -179,6 +269,7 @@ const getUserProgressInCoursesByUserId = async (userId) => {
       title: userCourse.course.title,
       description: userCourse.course.description,
       progress: userCourse.progress,
+      whatchedVideos: userCourse.watchedVideos,
     }));
   } catch (error) {
     console.error('Erro ao buscar cursos do usuário:', error);
@@ -186,9 +277,37 @@ const getUserProgressInCoursesByUserId = async (userId) => {
   };
 };
 
-const updateProgress = async (userId, courseId, newProgress) => {
+const updateProgress = async (userId, courseId, videoId) => {
   try {
+    // Verifica se o relacionamento usuário-curso existe e guarda ele em uma variável
     const userCourse = await UserCourse.findOne({ where: { userId, courseId } });
+    if (!userCourse) {
+      console.log('Relacionamento usuário-curso não encontrado.');
+      return;
+    }
+    // Verifica se o vídeo existe
+    const video = await Video.findByPk(videoId);
+    if (!video) {
+      console.log('Vídeo não encontrado.');
+      return;
+    }
+    // Coloca o vídeo como assistido na tabela de relacionamento
+    const watchedVideos = userCourse.watchedVideos;
+    if (!watchedVideos.includes(videoId)) {
+      watchedVideos.push(videoId);
+      userCourse.watchedVideos = watchedVideos;
+      userCourse.changed('watchedVideos', true); // Marca o campo como alterado
+      await userCourse.save();
+    }
+
+    // Busca o curso com os vídeos para calcular o progresso atual
+    const courseWithVideos = await getCourseWithVideos(courseId);
+    const totalVideos = courseWithVideos.videos.length;
+    const completedVideos = userCourse.watchedVideos.length;
+    // Calcula o novo progresso do curso e atualiza o relacionamento
+    const newProgress = Math.round((completedVideos / totalVideos) * 100);
+    console.log(`Novo progresso: ${newProgress}%`);
+    // Atualiza o progresso no relacionamento usuário-curso
     if (userCourse) {
       userCourse.progress = newProgress;
       await userCourse.save();
@@ -201,4 +320,4 @@ const updateProgress = async (userId, courseId, newProgress) => {
   }
 };
 
-export { createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, addVideoToCourse, getProgress, getUsersProgress, getUserProgressInCoursesByUserId, updateProgress };
+export { createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, addVideoToCourse, deleteVideo, getProgress, getUsersProgress, getUserProgressInCoursesByUserId, updateProgress };
