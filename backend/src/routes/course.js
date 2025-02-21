@@ -18,10 +18,18 @@ router.get("/all", CourseController.getAllCourses);
 
 router.get("/:id", CourseController.getCourseById);
 
-router.get("/progress/incourse", CourseController.getCoursesWithProgress);
+router.patch("/update/:id", CourseController.updateCourseById); //admin
 
 router.delete("/delete/:id", CourseController.deleteCourseById); //admin
 
-router.patch("/update/:id", CourseController.updateCourseById); //admin
+router.get("/progress/incourse", CourseController.getCoursesWithProgress);
+
+router.get("/progress/:id", CourseController.getProgressInCourse);
+
+router.get("/users/progress/:id", CourseController.getUserProgressInAllCoursesByUserId); //admin
+
+router.post("/progress/:id", CourseController.updateProgressInCourse);
+
+router.get("/users/progress", CourseController.getUsersProgress); //admin
 
 export default router;

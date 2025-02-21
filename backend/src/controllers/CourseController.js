@@ -1,7 +1,7 @@
 import getToken from '../helpers/get-token.js';
 import getUserByToken from '../helpers/get-user-by-token.js';
 import { sequelize, User, Course, UserCourse, Video } from '../models/associations.js'
-import { addVideoToCourse, createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos } from "../services/courseService.js"
+import { addVideoToCourse, createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, updateProgress, getProgress, getUsersProgress, getUserProgressInCoursesByUserId } from "../services/courseService.js"
 
 
 const courseController = {
@@ -120,7 +120,75 @@ const courseController = {
             return res.status(404).json({ error: 'Vídeo não encontrado!' })
         }
         res.status(200).json(video)
-    }
+    },
+
+    getProgressInCourse: async (req, res) => {
+        // const userId = req.params.userId
+        const courseId = req.params.id
+        const token = getToken(req)
+        const user = await getUserByToken(token, res)
+        const userId = user.id
+
+        if (!user || user.id != userId) {
+            res.status(403).json({ message: 'Acesso não permitido!' })
+            return
+        }
+
+        const progress = await getProgress(userId, courseId)
+
+        if (!progress) {
+            res.status(404).json({ message: 'Progresso não encontrado!' })
+            return
+        }
+
+        res.status(200).json({ progress })
+    },
+
+    getUserProgressInAllCoursesByUserId: async (req, res) => {
+        const userId = req.params.id
+        const user = await User.findOne({ where: { id: userId }, raw: true })
+        if (!user) return res.status(404).json({ message: 'Usuário não encontrado!' })
+        user.password = undefined
+        if (!user) {
+            res.status(422).json({ message: 'Usuário não encontrado.' })
+            return
+        }
+        const progress = await getUserProgressInCoursesByUserId(userId);
+        if (!progress) {
+            res.status(404).json({ message: 'Progressos não encontrados!' });
+            return;
+        }
+        res.status(200).json({ user, progress });
+    },
+
+    updateProgressInCourse: async (req, res) => {
+        const courseId = req.params.id
+        const token = getToken(req)
+        const user = await getUserByToken(token, req, res)
+        const userId = user.id
+        const progress = req.body.progress
+
+        if (!user || user.id != userId) {
+            res.status(403).json({ message: 'Acesso não permitido!' })
+            return
+        }
+
+        await updateProgress(userId, courseId, progress)
+
+        res.status(200).json({ message: 'Progresso atualizado com sucesso!' })
+    },
+
+    getUsersProgress: async (req, res) => {
+        console.log('buscando usuários com seus progressos')
+        const progress = await getUsersProgress();
+
+        if (!progress) {
+            res.status(404).json({ message: 'Progressos não encontrados!' });
+            return;
+        }
+
+        res.status(200).json({ progress });
+    },
 }
 
 export default courseController;
