@@ -8,6 +8,7 @@ const testController = {
     createTest: async (req, res) => {
         const data = await req.body;
         const test = await createTest(data);
+        if (!test) return res.status(404).json({error: "Erro ao criar teste"});
         res.status(201).json(test)
     },
 

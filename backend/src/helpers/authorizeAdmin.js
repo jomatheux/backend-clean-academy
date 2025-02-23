@@ -1,7 +1,7 @@
 import getUserByToken from "./get-user-by-token.js";
 import getToken from "./get-token.js";
 
-const authorizeAdmin = async (req, res, next) => { // 'roles' é um array de roles permitidos
+const authorizeAdmin = async (req, res, next) => {
 
   // Obtém o token do header da requisição
   const token = getToken(req);
