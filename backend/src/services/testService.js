@@ -88,6 +88,10 @@ async function createTest(data) {
     if (questions.length !== qntQuestions) {
       return { error: 'A quantidade de questões não corresponde ao valor informado.' };
     }
+    //Validar se a prova já existe
+    if (Test.findOne({ where: { courseId } })) {
+      return { error: 'Já existe uma prova para este curso' };
+    };
 
     // Criar a prova
     const prova = await Test.create({
