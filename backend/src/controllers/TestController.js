@@ -8,7 +8,7 @@ const testController = {
     createTest: async (req, res) => {
         const data = await req.body;
         const test = await createTest(data);
-        if (!test) return res.status(404).json({error: "Erro ao criar teste"});
+        if (!test) return res.status(404).json({ error: "Erro ao criar teste" });
         res.status(201).json(test)
     },
 
@@ -27,6 +27,24 @@ const testController = {
         if (!attempts) return res.status(404).json("Tentativas não encontradas")
         res.json(attempts)
     },
+
+    deleteTest: async (req, res) => {
+        const testId = req.params.id;
+        const test = await Test.findByPk(testId);
+        if (!test) return res.status(404).json("Teste não encontrado");
+        await test.destroy();
+        res.json("Teste deletado com sucesso")
+    },
+
+    updateTest: async (req, res) => {
+        const testId = req.params.id;
+        const test = await Test.findByPk(testId);
+        if (!test) return res.status(404).json("Teste não encontrado");
+        const updatedTest = await test.update(req.body);
+        if (!updatedTest) return res.status(404).json("Erro ao atualizar teste");
+        res.json(updatedTest)
+    },
+
 
     takeTest: async (req, res) => {
         const token = getToken(req);
