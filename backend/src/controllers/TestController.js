@@ -50,10 +50,10 @@ const testController = {
         const token = getToken(req);
         const user = await getUserByToken(token, req, res);
         const testId = req.params.id;
-        const receivedGrade = req.body.receivedGrade
+        const answers = req.body.answers
 
         if (!user) return res.status(404).json("Usuário não encontrado");
-        const test = await takeTest(testId, user.id, receivedGrade);
+        const test = await takeTest(testId, user.id, answers);
         if (!test) return res.status(404).json("Teste não encontrado");
         res.json(test)
     },

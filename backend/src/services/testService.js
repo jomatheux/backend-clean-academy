@@ -36,7 +36,7 @@ async function releaseTest(userId, courseId) {
   }
 }
 
-async function takeTest(userId, testId, receivedGrade) {
+async function takeTest(testId, userId, answers) {
   try {
     // Obter a prova e a nota mínima
     const test = await Test.findByPk(testId);
@@ -45,6 +45,15 @@ async function takeTest(userId, testId, receivedGrade) {
       return { error: 'Prova não encontrada.' };
     }
 
+    const correctAnswers = test.questions.map((question) => question.correctAnswer);
+
+    // Comparar as respostas
+    let receivedGrade = 0;
+    for (let i = 0; i < test.qntQuestions; i++) {
+      if (answers[i] === correctAnswers[i]) {
+        receivedGrade += 1;
+      }
+    }
     // Registrar a tentativa
     const report = await registerAttempt(userId, testId, receivedGrade);
 
@@ -88,7 +97,7 @@ async function createTest(data) {
     if (questions.length !== qntQuestions) {
       return { error: 'A quantidade de questões não corresponde ao valor informado.' };
     }
-    
+
     const test = await Test.findOne({ where: { courseId } })
     //Validar se a prova já existe nesse curso
     if (test) {
