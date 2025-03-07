@@ -114,14 +114,14 @@ const userController = {
         if (!user) {
             return res
                 .status(422)
-                .json({ message: 'Não há usuário cadastrado com este e-mail!' })
+                .json({ message: 'Credenciais inválidas' })
         }
 
         // check if password match
         const checkPassword = await bcrypt.compare(password, user.password)
 
         if (!checkPassword) {
-            return res.status(422).json({ message: 'Senha inválida' })
+            return res.status(422).json({ message: 'Credenciais inválidas' })
         }
 
         await createUserToken(user, req, res)
