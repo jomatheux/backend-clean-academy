@@ -10,16 +10,19 @@ const createUserWithCourses = async (userData) => {
     // Busca todos os cursos
     const courses = await Course.findAll();
 
-    // Cria o relacionamento entre o usuário e os cursos
-    const userCourseData = courses.map((course) => ({
-      userId: newUser.id,
-      courseId: course.id,
-      progress: 0, // Progresso inicial
-    }));
+    if (courses.length > 0) {
+      // Cria o relacionamento entre o usuário e os cursos
+      const userCourseData = courses.map((course) => ({
+        userId: newUser.id,
+        courseId: course.id,
+        progress: 0, // Progresso inicial
+      }));
 
-    await UserCourse.bulkCreate(userCourseData);
+      await UserCourse.bulkCreate(userCourseData);
 
-    console.log('Usuário criado e associado a todos os cursos com sucesso!');
+      console.log('Usuário criado e associado a todos os cursos com sucesso!');
+    }
+    
     return newUser;
   } catch (error) {
     console.error('Erro ao criar usuário e associá-lo aos cursos:', error);
