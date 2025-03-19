@@ -3,8 +3,9 @@ import express from "express"
 const router = express.Router();
 
 import TestController from "../controllers/TestController.js";
+
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
-import checkToken from "../helpers/checkToken.js";
+import checkToken from "../helpers/check-token.js";
 
 router.post('/create', authorizeAdmin, TestController.createTest); //admin
 router.get('/all', checkToken, TestController.getAllTests);

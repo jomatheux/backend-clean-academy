@@ -2,8 +2,9 @@ import express from "express"
 const router = express.Router();
 import ProductController from "../controllers/ProductController.js"
 import upload from "../helpers/upload.js";
+
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
-import checkToken from "../helpers/checkToken.js";
+import checkToken from "../helpers/check-token.js";
 
 router.post('/create/:id', authorizeAdmin, upload.single("image"), (req, res, next) => {
     const image = req.file;

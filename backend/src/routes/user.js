@@ -5,7 +5,7 @@ const router = express.Router();
 import UserController from "../controllers/UserController.js";
 
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
-import checkToken from "../helpers/checkToken.js";
+import checkToken from "../helpers/check-token.js";
 // import { imageUpload }  from "../helpers/image-upload.js";
 
 router.post("/register", authorizeAdmin, UserController.register); //admin

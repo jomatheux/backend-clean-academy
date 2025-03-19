@@ -5,7 +5,7 @@ const router = express.Router();
 import CourseController from "../controllers/CourseController.js";
 
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
-import checkToken from "../helpers/checkToken.js";
+import checkToken from "../helpers/check-token.js";
 
 router.post("/create", authorizeAdmin, CourseController.createCourse); //admin
 
