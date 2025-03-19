@@ -4,32 +4,35 @@ const router = express.Router();
 
 import CourseController from "../controllers/CourseController.js";
 
-router.post("/create", CourseController.createCourse); //admin
+import authorizeAdmin from "../helpers/authorizeAdmin.js";
+import checkToken from "../helpers/checkToken.js";
 
-router.post("/addvideo/:id", CourseController.addVideoToCourse); //admin
+router.post("/create", authorizeAdmin, CourseController.createCourse); //admin
 
-router.delete("/deletevideo/:id", CourseController.deleteVideoFromCourse); //admin
+router.post("/addvideo/:id", authorizeAdmin, CourseController.addVideoToCourse); //admin
 
-router.patch("/update/video/:id", CourseController.updateVideoFromCourse); //admin
+router.delete("/deletevideo/:id", authorizeAdmin, CourseController.deleteVideoFromCourse); //admin
 
-router.get("/video/:id", CourseController.getVideo);
+router.patch("/update/video/:id", authorizeAdmin, CourseController.updateVideoFromCourse); //admin
 
-router.get("/all", CourseController.getAllCourses);
+router.get("/video/:id", checkToken, CourseController.getVideo);
 
-router.get("/:id", CourseController.getCourseById);
+router.get("/all", checkToken, CourseController.getAllCourses);
 
-router.patch("/update/:id", CourseController.updateCourseById); //admin
+router.get("/:id", checkToken, CourseController.getCourseById);
 
-router.delete("/delete/:id", CourseController.deleteCourseById); //admin
+router.patch("/update/:id", authorizeAdmin, CourseController.updateCourseById); //admin
 
-router.get("/progress/incourse", CourseController.getCoursesWithProgress);
+router.delete("/delete/:id", authorizeAdmin, CourseController.deleteCourseById); //admin
 
-router.get("/progress/:id", CourseController.getProgressInCourse);
+router.get("/progress/incourse", checkToken, CourseController.getCoursesWithProgress);
 
-router.get("/users/progress/:id", CourseController.getUserProgressInAllCoursesByUserId); //admin
+router.get("/progress/:id", checkToken, CourseController.getProgressInCourse);
 
-router.post("/progress/:id", CourseController.updateProgressInCourse);
+router.get("/users/progress/:id", authorizeAdmin, CourseController.getUserProgressInAllCoursesByUserId); //admin
 
-router.get("/users/progress", CourseController.getUsersProgress); //admin
+router.post("/progress/:id", checkToken, CourseController.updateProgressInCourse);
+
+router.get("/users/progress", authorizeAdmin, CourseController.getUsersProgress); //admin
 
 export default router;

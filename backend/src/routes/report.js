@@ -1,8 +1,9 @@
 import express from "express"
 const router = express.Router();
 import ReportController from "../controllers/ReportController.js";
+import checkToken from "../helpers/checkToken.js";
 
-router.post('/generate/:id', ReportController.generateReport);
-router.get('/get-report', ReportController.getReportOfUser);
+router.post('/generate/:id', checkToken, ReportController.generateReport);
+router.get('/get-report', checkToken, ReportController.getReportOfUser);
 
 export default router;

@@ -2,8 +2,10 @@ import express from "express"
 const router = express.Router();
 import ProductController from "../controllers/ProductController.js"
 import upload from "../helpers/upload.js";
+import authorizeAdmin from "../helpers/authorizeAdmin.js";
+import checkToken from "../helpers/checkToken.js";
 
-router.post('/create/:id', upload.single("image"), (req, res, next) => {
+router.post('/create/:id', authorizeAdmin, upload.single("image"), (req, res, next) => {
     const image = req.file;
     if (!image) {
         return res.status(400).json({ message: "Por favor, envie um arquivo." });
@@ -11,14 +13,14 @@ router.post('/create/:id', upload.single("image"), (req, res, next) => {
     next();
 }, ProductController.createProduct); //admin
 
-router.get('/all', ProductController.getAllProducts);
+router.get('/all', checkToken, ProductController.getAllProducts);
 
-router.get('/:id', ProductController.getProductById);
+router.get('/:id', checkToken, ProductController.getProductById);
 
-router.get('/course/:id', ProductController.getCourseProducts);
+router.get('/course/:id', checkToken, ProductController.getCourseProducts);
 
-router.patch('/edit/:id', upload.single("image"), ProductController.updateProduct); //admin
+router.patch('/edit/:id', authorizeAdmin, upload.single("image"), ProductController.updateProduct); //admin
 
-router.delete('/delete/:id', ProductController.deleteProduct); //admin
+router.delete('/delete/:id', authorizeAdmin, ProductController.deleteProduct); //admin
 
 export default router;
