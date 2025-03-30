@@ -28,6 +28,10 @@ const Course = sequelize.define('Course', {
         type: DataTypes.STRING,
         allowNull: true,
     },
+    level:{
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
 }, {
     timestamps: true, // Gera automaticamente os campos 'createdAt' e 'updatedAt'
     tableName: 'tb_courses', // Nome da tabela no banco

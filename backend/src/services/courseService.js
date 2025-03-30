@@ -3,6 +3,7 @@ import Course from '../models/Course.js';
 import User from '../models/User.js';
 import UserCourse from '../models/UserCourse.js';
 import Video from '../models/Video.js';
+import Product from '../models/Product.js';
 
 
 const createCourseWithUsers = async (courseData) => {
@@ -39,7 +40,7 @@ const getCoursesWithProgressByUserId = async (userId) => {
         {
           model: Course,
           as: 'course', // Nome do alias na relação
-          attributes: ['id', 'title', 'description'], // Campos que queremos do modelo Course
+          attributes: ['id', 'title', 'description', 'level'], // Campos que queremos do modelo Course
         },
       ],
     });
@@ -54,6 +55,7 @@ const getCoursesWithProgressByUserId = async (userId) => {
       title: userCourse.course.title,
       description: userCourse.course.description,
       progress: userCourse.progress,
+      level: userCourse.course.level,
     }));
   } catch (error) {
     console.error('Erro ao buscar cursos do usuário:', error);
@@ -61,7 +63,7 @@ const getCoursesWithProgressByUserId = async (userId) => {
   }
 };
 
-const getCourseWithVideos = async (courseId) => {
+const getCourseWithVideosAndProducts = async (courseId) => {
   try {
     const course = await Course.findByPk(courseId, {
       include: [
@@ -69,6 +71,11 @@ const getCourseWithVideos = async (courseId) => {
           model: Video,
           as: 'videos',
           attributes: ['id', 'title', 'url', 'duration', 'image'], // Campos que deseja retornar
+        },
+        {
+          model:Product,
+          as: 'products',
+          attributes: ['id', 'name', 'description', 'image'],
         },
       ],
     });
@@ -109,7 +116,7 @@ const addVideoToCourse = async (courseId, videoData) => {
       if (userCourse) {
         userCourse.forEach(async (uc) => {
           // Busca o curso com os vídeos para calcular o progresso atual
-          const courseWithVideos = await getCourseWithVideos(courseId);
+          const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
           const totalVideos = courseWithVideos.videos.length;
           const completedVideos = uc.watchedVideos.length;
           // Calcula o novo progresso do curso e atualiza o relacionamento
@@ -165,7 +172,7 @@ const deleteVideo = async (videoId) => {
             uc.watchedVideos = uc.watchedVideos.filter(v => v !== videoId);
           }
           // Busca o curso com os vídeos para calcular o progresso atual
-          const courseWithVideos = await getCourseWithVideos(courseId);
+          const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
           const totalVideos = courseWithVideos.videos.length;
           const completedVideos = uc.watchedVideos.length;
           // Calcula o novo progresso do curso e atualiza o relacionamento
@@ -217,7 +224,7 @@ const getUsersProgress = async () => {
             {
               model: Course,
               as: 'course',
-              attributes: ['title'], // Seleciona o título do curso
+              attributes: ['id', 'title', 'level'], // Seleciona o título do curso
             },
           ],
         },
@@ -254,7 +261,7 @@ const getUserProgressInCoursesByUserId = async (userId) => {
         {
           model: Course,
           as: 'course', // Nome do alias na relação
-          attributes: ['id', 'title', 'description'], // Campos que queremos do modelo Course
+          attributes: ['id', 'title', 'description', 'level'], // Campos que queremos do modelo Course
         },
       ],
     });
@@ -270,6 +277,7 @@ const getUserProgressInCoursesByUserId = async (userId) => {
       description: userCourse.course.description,
       progress: userCourse.progress,
       whatchedVideos: userCourse.watchedVideos,
+      level: userCourse.course.level,
     }));
   } catch (error) {
     console.error('Erro ao buscar cursos do usuário:', error);
@@ -301,7 +309,7 @@ const updateProgress = async (userId, courseId, videoId) => {
     }
 
     // Busca o curso com os vídeos para calcular o progresso atual
-    const courseWithVideos = await getCourseWithVideos(courseId);
+    const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
     const totalVideos = courseWithVideos.videos.length;
     const completedVideos = userCourse.watchedVideos.length;
     // Calcula o novo progresso do curso e atualiza o relacionamento
@@ -320,4 +328,4 @@ const updateProgress = async (userId, courseId, videoId) => {
   }
 };
 
-export { createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideos, addVideoToCourse, deleteVideo, getProgress, getUsersProgress, getUserProgressInCoursesByUserId, updateProgress };
+export { createCourseWithUsers, getCoursesWithProgressByUserId, getCourseWithVideosAndProducts, addVideoToCourse, deleteVideo, getProgress, getUsersProgress, getUserProgressInCoursesByUserId, updateProgress };
