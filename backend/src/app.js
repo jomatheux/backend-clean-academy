@@ -16,6 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 app.use('/api/product', express.static(path.join(__dirname, 'public/product')));
+app.use('/api/course', express.static(path.join(__dirname, 'public/course')));
+app.use('/api/video', express.static(path.join(__dirname, 'public/video')));
+app.use('/api/user', express.static(path.join(__dirname, 'public/user')));
+
 
 // Configurando rotas
 app.use('/api', routes);

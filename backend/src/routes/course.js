@@ -6,14 +6,21 @@ import CourseController from "../controllers/CourseController.js";
 
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
 import checkToken from "../helpers/check-token.js";
+import upload from "../helpers/upload.js";
 
-router.post("/create", authorizeAdmin, CourseController.createCourse); //admin
+router.post("/create", authorizeAdmin, upload.single("image"), CourseController.createCourse); //admin
 
-router.post("/addvideo/:id", authorizeAdmin, CourseController.addVideoToCourse); //admin
+router.post("/addvideo/:id", authorizeAdmin, upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "url", maxCount: 1 }]),
+    CourseController.addVideoToCourse); //admin
 
 router.delete("/deletevideo/:id", authorizeAdmin, CourseController.deleteVideoFromCourse); //admin
 
-router.patch("/update/video/:id", authorizeAdmin, CourseController.updateVideoFromCourse); //admin
+router.patch("/update/video/:id", authorizeAdmin, upload.fields([
+    { name: "image", maxCount: 1 },
+    { name: "url", maxCount: 1 }]),
+    CourseController.updateVideoFromCourse); //admin
 
 router.get("/video/:id", checkToken, CourseController.getVideo);
 
@@ -21,7 +28,7 @@ router.get("/all", checkToken, CourseController.getAllCourses);
 
 router.get("/:id", checkToken, CourseController.getCourseById);
 
-router.patch("/update/:id", authorizeAdmin, CourseController.updateCourseById); //admin
+router.patch("/update/:id", authorizeAdmin, upload.single("image"), CourseController.updateCourseById); //admin
 
 router.delete("/delete/:id", authorizeAdmin, CourseController.deleteCourseById); //admin
 

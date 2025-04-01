@@ -1,33 +1,15 @@
 import Product from "../models/Product.js";
 import { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } from "../services/productService.js";
-import fs from "fs";
-
-const removeOldImage = (product) => {
-    if (!product.image) {
-        console.log("Nenhuma imagem antiga para deletar.");
-        return;
-    }
-
-    fs.unlink(product.image, (err) => {
-        if (err) {
-            console.error(`Erro ao deletar a imagem: ${err.message}`);
-        } else {
-            console.log(`Imagem antiga deletada com sucesso: ${product.image}`);
-        }
-    });
-};
+import removeOldImage from "../helpers/removeOldImage.js";
 
 const productController = {
     // Criar um novo produto
     createProduct: async (req, res) => {
         const courseId = req.params.id;
-        console.log(courseId);
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
         const image = `product/${req.file.filename}`;
-        console.log(image);
-        console.log(req.file);
 
         const product = await createProduct(courseId, { name, image, description });
         res.status(201).json(product)
@@ -55,7 +37,7 @@ const productController = {
         const { title, description } = req.body;
         let image = null;
         if (req.file) {
-            image = `products/${req.file.filename}`;
+            image = `product/${req.file.filename}`;
         }
         const data = { title, description, image };
         const product = await Product.findByPk(id)

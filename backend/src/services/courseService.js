@@ -4,6 +4,8 @@ import User from '../models/User.js';
 import UserCourse from '../models/UserCourse.js';
 import Video from '../models/Video.js';
 import Product from '../models/Product.js';
+import removeOldImage from '../helpers/removeOldImage.js';
+import removeOldUrl from '../helpers/removeOldUrl.js';
 
 
 const createCourseWithUsers = async (courseData) => {
@@ -73,7 +75,7 @@ const getCourseWithVideosAndProducts = async (courseId) => {
           attributes: ['id', 'title', 'url', 'duration', 'image'], // Campos que deseja retornar
         },
         {
-          model:Product,
+          model: Product,
           as: 'products',
           attributes: ['id', 'name', 'description', 'image'],
         },
@@ -158,6 +160,8 @@ const deleteVideo = async (videoId) => {
       return;
     }
     // Deleta o vídeo
+    removeOldImage(video);
+    removeOldUrl(video);
     await video.destroy();
     console.log('Vídeo deletado com sucesso!');
     // Atualiza o progresso do curso
@@ -176,7 +180,10 @@ const deleteVideo = async (videoId) => {
           const totalVideos = courseWithVideos.videos.length;
           const completedVideos = uc.watchedVideos.length;
           // Calcula o novo progresso do curso e atualiza o relacionamento
-          const newProgress = Math.round((completedVideos / totalVideos) * 100);
+          let newProgress = 0; // Valor padrão para evitar NaN
+          if (totalVideos > 0) {
+            newProgress = Math.round((completedVideos / totalVideos) * 100);
+          }
           console.log(`Novo progresso: ${newProgress}%`);
           uc.progress = newProgress;
           await uc.save();
@@ -313,7 +320,10 @@ const updateProgress = async (userId, courseId, videoId) => {
     const totalVideos = courseWithVideos.videos.length;
     const completedVideos = userCourse.watchedVideos.length;
     // Calcula o novo progresso do curso e atualiza o relacionamento
-    const newProgress = Math.round((completedVideos / totalVideos) * 100);
+    let newProgress = 0; // Valor padrão para evitar NaN
+    if (totalVideos > 0) {
+      newProgress = Math.round((completedVideos / totalVideos) * 100);
+    }
     console.log(`Novo progresso: ${newProgress}%`);
     // Atualiza o progresso no relacionamento usuário-curso
     if (userCourse) {

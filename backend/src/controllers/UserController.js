@@ -7,16 +7,16 @@ import getUserByToken from '../helpers/get-user-by-token.js'
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
 import { createUserWithCourses, deleteUserById } from '../services/userService.js';
+import removeOldImage from '../helpers/removeOldImage.js';
 
 
 const userController = {
     register: async (req, res) => {
         const name = req.body.name
         const email = req.body.email
-        const phone = req.body.phone
         const cpf = req.body.cpf
         const role = req.body.role
-        const image = req.body.image
+        const image = `user/${req.file.filename}`;
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
@@ -29,11 +29,6 @@ const userController = {
 
         if (!email) {
             res.status(422).json({ message: 'O e-mail é obrigatório!' })
-            return
-        }
-
-        if (!phone) {
-            res.status(422).json({ message: 'O telefone é obrigatório!' })
             return
         }
 
@@ -81,7 +76,6 @@ const userController = {
             const newUser = await createUserWithCourses({
                 name: name,
                 email: email,
-                phone: phone,
                 cpf: cpf,
                 password: passwordHash,
                 role: role,
@@ -179,16 +173,18 @@ const userController = {
             res.status(404).json({ message: 'Usuário não encontrado!' });
             return;
         }
-
         // console.log(user);
         // console.log(req.body)
         // console.log(req.file.filename)
-
+        console.log(req.body.name)
         const name = req.body.name
         const email = req.body.email
         const cpf = req.body.cpf
         const role = req.body.role
-        const image = req.body.image
+        let image = null;
+        if (req.file) {
+            image = `user/${req.file.filename}`;
+        }
         const password = req.body.password
         const confirmpassword = req.body.confirmpassword
 
@@ -218,7 +214,7 @@ const userController = {
         user.email = email
 
         if (image) {
-            const imageName = req.body.image
+            const imageName = image
             user.image = imageName
         }
 
@@ -253,6 +249,10 @@ const userController = {
 
         try {
             // returns updated data
+            if (image) {
+                const oldUser = await User.findByPk(req.params.id)
+                removeOldImage(oldUser)
+            }
             const updatedUser = await user.update({
                 name: user.name,
                 email: user.email,

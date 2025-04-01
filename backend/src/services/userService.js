@@ -1,5 +1,6 @@
 import { where } from 'sequelize';
 import { User, Course, UserCourse } from '../models/associations.js'
+import removeOldImage from '../helpers/removeOldImage.js'
 
 const createUserWithCourses = async (userData) => {
   try {
@@ -22,7 +23,7 @@ const createUserWithCourses = async (userData) => {
 
       console.log('Usuário criado e associado a todos os cursos com sucesso!');
     }
-    
+
     return newUser;
   } catch (error) {
     console.error('Erro ao criar usuário e associá-lo aos cursos:', error);
@@ -35,6 +36,9 @@ const deleteUserById = async (userId) => {
     const user = await User.findByPk(userId);
     const deletedUser = user;
     const userCourse = await UserCourse.findAll({ where: { userId: user.id } });
+    if (user.image) {
+      removeOldImage(user)
+    }
     if (user) {
       await user.destroy();
       await userCourse.map(uc => uc.destroy());

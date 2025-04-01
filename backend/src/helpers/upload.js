@@ -12,10 +12,16 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     let folder = "";
 
-    console.log(req)
+    console.log(req.baseUrl);
 
     if (req.baseUrl.includes('products')) {
       folder = "product";
+    }else if(req.originalUrl.includes('courses/addvideo') || req.originalUrl.includes('courses/update/video')) {
+      folder = "video";
+    }else if(req.baseUrl.includes('courses')) {
+      folder = "course";
+    }else {
+      folder = "user";
     }
     cb(null, path.join(__dirname, `../public/${folder}/`));
   },
@@ -26,7 +32,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   // Aceite apenas imagens
-  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png" || file.mimetype === "video/mp4") {
     cb(null, true);
   } else {
     cb(null, false);

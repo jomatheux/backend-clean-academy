@@ -15,9 +15,6 @@ const Video = sequelize.define('Video', {
   url: {
     type: DataTypes.STRING,
     allowNull: false, // URL do vídeo (pode ser local ou hospedado em algum serviço)
-    validate: {
-      isUrl: true, // Valida se é uma URL válida
-    },
   },
   duration: {
     type: DataTypes.INTEGER, // Duração em segundos
