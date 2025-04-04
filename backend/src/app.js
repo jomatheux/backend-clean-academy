@@ -10,7 +10,7 @@ import path from 'path';
 const app = express();
 
 const corsOptions = {
-    origin: 'http://localhost:3000', // Permite apenas esta origem
+    origin: ['http://localhost:3000', 'https://new-clean-academy.vercel.app'], // Permite apenas esta origem
     credentials: true, // Permite cookies e cabeçalhos de autorização
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
