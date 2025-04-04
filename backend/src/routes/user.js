@@ -29,4 +29,6 @@ router.patch(
 
 router.delete("/delete/:id", authorizeAdmin, UserController.deleteUserById); //admin
 
+router.post("/logout", checkToken, UserController.logout);
+
 export default router;

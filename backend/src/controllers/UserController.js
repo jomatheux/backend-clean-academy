@@ -126,7 +126,7 @@ const userController = {
 
         console.log(req.headers.authorization)
 
-        if (req.headers.authorization) {
+        if (req.cookies.token) {
             const token = getToken(req)
             const decoded = jwt.verify(token, process.env.JWT_SECRET)
 
@@ -286,6 +286,11 @@ const userController = {
         } else {
             res.status(500).json({ message: 'Falha ao excluir o usuário.' })
         }
+    },
+
+    logout: async (req, res) => {
+        res.clearCookie('token');
+        res.status(200).json({ message: 'Deslogado com sucesso!' });
     },
 }
 

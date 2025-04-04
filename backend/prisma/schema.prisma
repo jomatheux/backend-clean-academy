@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model tb_courses {
+  id              Int               @id @default(autoincrement())
+  title           String            @db.VarChar(255)
+  duration        Float
+  description     String            @db.VarChar(255)
+  isFinished      Boolean?          @default(false)
+  image           String?           @db.VarChar(255)
+  level           String            @db.VarChar(255)
+  createdAt       DateTime          @db.DateTime(0)
+  updatedAt       DateTime          @db.DateTime(0)
+  tb_products     tb_products[]
+  tb_tests        tb_tests[]
+  tb_user_courses tb_user_courses[]
+  tb_videos       tb_videos[]
+}
+
+model tb_products {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(255)
+  description String      @db.VarChar(255)
+  image       String?     @db.VarChar(255)
+  createdAt   DateTime    @db.DateTime(0)
+  updatedAt   DateTime    @db.DateTime(0)
+  courseId    Int?
+  tb_courses  tb_courses? @relation(fields: [courseId], references: [id], map: "tb_products_ibfk_1")
+
+  @@index([courseId], map: "courseId")
+}
+
+model tb_reports {
+  id        Int       @id @default(autoincrement())
+  grade     Float     @db.Float
+  attempt   Int
+  date      DateTime  @db.DateTime(0)
+  createdAt DateTime  @db.DateTime(0)
+  updatedAt DateTime  @db.DateTime(0)
+  testId    Int?
+  userId    Int?
+  tb_tests  tb_tests? @relation(fields: [testId], references: [id], map: "tb_reports_ibfk_1")
+  tb_users  tb_users? @relation(fields: [userId], references: [id], map: "tb_reports_ibfk_2")
+
+  @@index([testId], map: "testId")
+  @@index([userId], map: "userId")
+}
+
+model tb_tests {
+  id           Int          @id @default(autoincrement())
+  questions    Json
+  qntQuestions Int
+  minGrade     Float        @db.Float
+  createdAt    DateTime     @db.DateTime(0)
+  updatedAt    DateTime     @db.DateTime(0)
+  courseId     Int?
+  tb_reports   tb_reports[]
+  tb_courses   tb_courses?  @relation(fields: [courseId], references: [id], map: "tb_tests_ibfk_1")
+
+  @@index([courseId], map: "courseId")
+}
+
+model tb_user_courses {
+  id            Int         @id @default(autoincrement())
+  progress      Float       @default(0)
+  watchedVideos Json
+  createdAt     DateTime    @db.DateTime(0)
+  updatedAt     DateTime    @db.DateTime(0)
+  userId        Int?
+  courseId      Int?
+  tb_users      tb_users?   @relation(fields: [userId], references: [id], map: "tb_user_courses_ibfk_1")
+  tb_courses    tb_courses? @relation(fields: [courseId], references: [id], map: "tb_user_courses_ibfk_2")
+
+  @@unique([userId, courseId], map: "tb_user_courses_courseId_userId_unique")
+  @@index([courseId], map: "courseId")
+}
+
+model tb_users {
+  id              Int               @id @default(autoincrement())
+  name            String            @db.VarChar(255)
+  cpf             String            @db.VarChar(255)
+  email           String            @unique(map: "email") @db.VarChar(255)
+  password        String            @db.VarChar(255)
+  role            tb_users_role     @default(user)
+  image           String?           @db.VarChar(255)
+  createdAt       DateTime          @db.DateTime(0)
+  updatedAt       DateTime          @db.DateTime(0)
+  tb_reports      tb_reports[]
+  tb_user_courses tb_user_courses[]
+}
+
+model tb_videos {
+  id         Int         @id @default(autoincrement())
+  title      String      @db.VarChar(255)
+  url        String      @db.VarChar(255)
+  duration   Int
+  image      String?     @db.VarChar(255)
+  createdAt  DateTime    @db.DateTime(0)
+  updatedAt  DateTime    @db.DateTime(0)
+  courseId   Int?
+  tb_courses tb_courses? @relation(fields: [courseId], references: [id], map: "tb_videos_ibfk_1")
+
+  @@index([courseId], map: "courseId")
+}
+
+enum tb_users_role {
+  admin
+  user
+}

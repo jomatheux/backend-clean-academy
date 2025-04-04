@@ -3,8 +3,7 @@ import 'dotenv/config';
 
 // middleware to validate token
 const checkToken = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  const token = authHeader && authHeader.split(" ")[1];
+  const token = req.cookies.token;
 
   if (!token) return res.status(401).json({ message: "Acesso negado!" });
 

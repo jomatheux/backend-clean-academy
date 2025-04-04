@@ -12,10 +12,17 @@ const createUserToken = async (user, req, res) => {
     process.env.JWT_SECRET
   );
 
+  // set token in cookie
+  res.cookie('token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production', // Use true em produção
+    sameSite: 'strict', // Proteção contra CSRF
+    maxAge: 3600000, // 1 hora
+  });
+
   // return token
   res.status(200).json({
     message: "Você está autenticado!",
-    token: token,
     userId: user.id,
     role: user.role,
   });
