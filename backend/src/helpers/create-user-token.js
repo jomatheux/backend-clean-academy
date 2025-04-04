@@ -14,10 +14,15 @@ const createUserToken = async (user, req, res) => {
 
   // set token in cookie
   res.cookie('token', token, {
+    // httpOnly: true,
+    // secure: process.env.NODE_ENV === 'production', // Use true em produção
+    // sameSite: 'strict', // Proteção contra CSRF
+    // maxAge: 3600000, // 1 hora
     httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // Use true em produção
-    sameSite: 'strict', // Proteção contra CSRF
-    maxAge: 3600000, // 1 hora
+    secure: false, // só em dev!
+    sameSite: 'lax', // ou 'none' se quiser testar cross-origin com cookies
+    path: '/',
+    maxAge: 3600 * 1000,  
   });
 
   // return token
