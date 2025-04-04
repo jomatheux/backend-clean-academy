@@ -4,9 +4,8 @@ CREATE TABLE `tb_courses` (
     `title` VARCHAR(255) NOT NULL,
     `duration` DOUBLE NOT NULL,
     `description` VARCHAR(255) NOT NULL,
-    `isFinished` BOOLEAN NULL DEFAULT false,
     `image` VARCHAR(255) NULL,
-    `level` VARCHAR(255) NOT NULL,
+    `level` ENUM('Begginer', 'Intermediate', 'Advanced') NOT NULL,
     `createdAt` DATETIME(0) NOT NULL,
     `updatedAt` DATETIME(0) NOT NULL,
 

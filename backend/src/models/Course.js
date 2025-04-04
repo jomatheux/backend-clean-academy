@@ -20,16 +20,12 @@ const Course = sequelize.define('Course', {
         type: DataTypes.STRING,
         allowNull: false,
     },
-    isFinished: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: false,
-    },
     image: {
         type: DataTypes.STRING,
         allowNull: true,
     },
     level:{
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM('Begginer', 'Intermediate', 'Advanced'),
         allowNull: false,
     },
 }, {

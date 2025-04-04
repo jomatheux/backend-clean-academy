@@ -25,19 +25,5 @@ Report.belongsTo(Test, { foreignKey: 'testId', as: 'test' });
 Report.belongsTo(User, { foreignKey: 'userId', as: 'users' });
 
 
-// User.associate = function (models) {
-//     User.hasMany(models.UserCourse, { as: 'userCourses', foreignKey: 'userId' });
-// };
-
-// UserCourse.associate = function (models) {
-//     UserCourse.belongsTo(models.User, { as: 'user', foreignKey: 'userId' });
-//     UserCourse.belongsTo(models.Course, { as: 'course', foreignKey: 'courseId' });
-// };
-
-// Course.associate = function (models) {
-//     Course.hasMany(models.UserCourse, { as: 'userCourses', foreignKey: 'courseId' });
-// };
-
-
 // Exportar os modelos e a instância do Sequelize
 export { sequelize, User, Course, UserCourse, Video, Product, Test, Report };

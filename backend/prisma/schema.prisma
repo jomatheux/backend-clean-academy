@@ -12,9 +12,8 @@ model tb_courses {
   title           String            @db.VarChar(255)
   duration        Float
   description     String            @db.VarChar(255)
-  isFinished      Boolean?          @default(false)
   image           String?           @db.VarChar(255)
-  level           String            @db.VarChar(255)
+  level           tb_courses_level
   createdAt       DateTime          @db.DateTime(0)
   updatedAt       DateTime          @db.DateTime(0)
   tb_products     tb_products[]
@@ -107,6 +106,12 @@ model tb_videos {
   tb_courses tb_courses? @relation(fields: [courseId], references: [id], map: "tb_videos_ibfk_1")
 
   @@index([courseId], map: "courseId")
+}
+
+enum tb_courses_level {
+  Begginer
+  Intermediate
+  Advanced
 }
 
 enum tb_users_role {
