@@ -9,7 +9,12 @@ import path from 'path';
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:3000', // Permite apenas esta origem
+    credentials: true, // Permite cookies e cabeçalhos de autorização
+};
+
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
