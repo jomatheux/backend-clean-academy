@@ -20,9 +20,10 @@ const createUserToken = async (user, req, res) => {
     // maxAge: 3600000, // 1 hora
     httpOnly: true,
     secure: false, // só em dev!
-    sameSite: 'lax', // ou 'none' se quiser testar cross-origin com cookies
+    sameSite: 'none', // ou 'none' se quiser testar cross-origin com cookies
     path: '/',
-    maxAge: 3600 * 1000,  
+    maxAge: 3600 * 1000, 
+    origin: 'http://localhost:3000', // Permitir cookies apenas de localhost 
   });
 
   // return token
