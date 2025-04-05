@@ -23,7 +23,7 @@ const createUserToken = async (user, req, res) => {
     sameSite: 'none', // ou 'none' se quiser testar cross-origin com cookies
     path: '/',
     maxAge: 3600 * 1000, 
-    origin: ['http://localhost:3000', 'https://new-clean-academy.vercel.app'], // Permitir cookies apenas de localhost 
+    origin: ['http://localhost:3000', 'https://new-clean-academy.vercel.app'],
   });
 
   // return token

@@ -289,7 +289,11 @@ const userController = {
     },
 
     logout: async (req, res) => {
-        res.clearCookie('token');
+        const token = getToken(req)
+        if (!token) {
+            return res.status(401).json({ message: 'Você não está logado!' });
+        }
+        res.clearCookie(token);
         res.status(200).json({ message: 'Deslogado com sucesso!' });
     },
 }
