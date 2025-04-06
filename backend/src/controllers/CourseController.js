@@ -14,9 +14,9 @@ const courseController = {
                 title: req.body.title,
                 description: req.body.description,
                 duration: req.body.duration,
-                isFinished: req.body.isFinished,
                 image: `course/${req.file.filename}`,
                 level: req.body.level,
+                instructor: req.body.instructor,
             };
 
             const newCourse = await createCourseWithUsers(courseData);

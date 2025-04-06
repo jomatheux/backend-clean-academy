@@ -231,7 +231,7 @@ const getUsersProgress = async () => {
             {
               model: Course,
               as: 'course',
-              attributes: ['id', 'title', 'level'], // Seleciona o título do curso
+              attributes: ['id', 'title', 'level', 'instructor'], // Seleciona o título do curso
             },
           ],
         },
@@ -268,7 +268,7 @@ const getUserProgressInCoursesByUserId = async (userId) => {
         {
           model: Course,
           as: 'course', // Nome do alias na relação
-          attributes: ['id', 'title', 'description', 'level'], // Campos que queremos do modelo Course
+          attributes: ['id', 'title', 'description', 'level', 'instructor'], // Campos que queremos do modelo Course
         },
       ],
     });
@@ -285,6 +285,7 @@ const getUserProgressInCoursesByUserId = async (userId) => {
       progress: userCourse.progress,
       whatchedVideos: userCourse.watchedVideos,
       level: userCourse.course.level,
+      instructor: userCourse.course.instructor,
     }));
   } catch (error) {
     console.error('Erro ao buscar cursos do usuário:', error);
