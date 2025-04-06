@@ -4,7 +4,7 @@ import getUserByToken from "../helpers/get-user-by-token.js";
 
 const reportController = {
     generateReport: async (req, res) => {
-        const token = getToken(req.headers.authorization);
+        const token = getToken(req);
         const user = await getUserByToken(token, req, res);
         const userId = user.id;
         const testId = req.params.id

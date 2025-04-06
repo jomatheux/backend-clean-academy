@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken";
 import 'dotenv/config';
+import getToken from "./get-token.js";
 
 // middleware to validate token
 const checkToken = (req, res, next) => {
-  const token = req.cookies.token;
+  // Get token
+  const token = getToken(req);
 
   if (!token) return res.status(401).json({ message: "Acesso negado!" });
 
