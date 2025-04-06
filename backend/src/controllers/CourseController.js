@@ -49,7 +49,7 @@ const courseController = {
     // Atualizar um curso
     updateCourseById: async (req, res) => {
         const { id } = req.params;
-        const { title, description, duration, isFinished, level } = req.body;
+        const { title, description, duration, isFinished, level, instructor } = req.body;
         let image = null;
         if (req.file) {
             image = `course/${req.file.filename}`;
@@ -59,7 +59,7 @@ const courseController = {
             return res.status(404).json({ error: 'Curso não encontrado!' });
         }
         removeOldImage(course);
-        await course.update({ title, description, duration, isFinished, image, level });
+        await course.update({ title, description, duration, isFinished, image, level, instructor });
         res.status(200).json(course);
     },
 
