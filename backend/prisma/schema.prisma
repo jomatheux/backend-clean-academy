@@ -14,6 +14,7 @@ model tb_courses {
   description     String            @db.VarChar(255)
   image           String?           @db.VarChar(255)
   level           tb_courses_level
+  instructor      String            @db.VarChar(255)
   createdAt       DateTime          @db.DateTime(0)
   updatedAt       DateTime          @db.DateTime(0)
   tb_products     tb_products[]

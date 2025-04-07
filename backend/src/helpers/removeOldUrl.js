@@ -11,7 +11,7 @@ const removeOldImage = (entity) => {
         if (err) {
             console.error(`Erro ao deletar a url: ${err.message}`);
         } else {
-            console.log(`Url antiga deletada com sucesso: ${entity.url}`);
+            console.log(`Url antiga deletada com sucesso, nova url: ${entity.url}`);
         }
     });
 }

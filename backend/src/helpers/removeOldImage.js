@@ -11,7 +11,7 @@ const removeOldImage = (entity) => {
         if (err) {
             console.error(`Erro ao deletar a imagem: ${err.message}`);
         } else {
-            console.log(`Imagem antiga deletada com sucesso: ${entity.image}`);
+            console.log(`Imagem antiga deletada com sucesso, nova imagem: ${entity.image}`);
         }
     });
 };
