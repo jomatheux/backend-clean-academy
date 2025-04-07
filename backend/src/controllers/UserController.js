@@ -251,7 +251,7 @@ const userController = {
 
         try {
             // returns updated data
-            if (image) {
+            if (image !== oldImage) {
                 const oldUser = await User.findByPk(req.params.id)
                 removeOldImage(oldUser)
             }
