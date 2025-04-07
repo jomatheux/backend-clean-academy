@@ -35,7 +35,8 @@ const productController = {
     updateProduct: async (req, res) => {
         const { id } = req.params;
         const { title, description } = req.body;
-        let image = null;
+        let oldImage = await Product.findByPk(id).then(p => p.image);
+        let image = oldImage;
         if (req.file) {
             image = `product/${req.file.filename}`;
         }
@@ -44,7 +45,8 @@ const productController = {
         if (!product) {
             return res.status(404).json({ error: 'Produto não encontrado!' });
         }
-        if (image) {
+        if (image !== oldImage) {
+            // Remove a imagem antiga se houver uma nova
             removeOldImage(product);
         }
         const updatedProduct = await updateProduct(id, data);

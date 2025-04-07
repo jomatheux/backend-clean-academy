@@ -50,7 +50,8 @@ const courseController = {
     updateCourseById: async (req, res) => {
         const { id } = req.params;
         const { title, description, duration, isFinished, level, instructor } = req.body;
-        let image = null;
+        const oldImage = await Course.findByPk(id).then(c => c.image);
+        let image = oldImage;
         if (req.file) {
             image = `course/${req.file.filename}`;
         }
@@ -58,7 +59,7 @@ const courseController = {
         if (!course) {
             return res.status(404).json({ error: 'Curso não encontrado!' });
         }
-        removeOldImage(course);
+        if (image !== oldImage) removeOldImage(course);
         await course.update({ title, description, duration, isFinished, image, level, instructor });
         res.status(200).json(course);
     },
@@ -122,8 +123,10 @@ const courseController = {
         const id = req.params.id;
         const video = await Video.findByPk(id);
         const { title, duration } = req.body;
-        let image = null;
-        let url = null;
+        let oldImage = video.image;
+        let oldUrl = video.url;
+        let image = oldImage;
+        let url = oldUrl;
         if (req.files.video[0]) {
             image = `video/${req.files.image[0]}`;
         }
@@ -134,8 +137,8 @@ const courseController = {
         if (!video) {
             return res.status(404).json({ error: 'Vídeo não encontrado!' })
         }
-        if (image) removeOldImage(video);
-        if (url) removeOldUrl(video);
+        if (image !== oldImage) removeOldImage(video);
+        if (url !== oldUrl) removeOldUrl(video);
         await video.update(videoData);
         res.status(200).json(video);
     },

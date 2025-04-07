@@ -181,7 +181,8 @@ const userController = {
         const email = req.body.email
         const cpf = req.body.cpf
         const role = req.body.role
-        let image = null;
+        let oldImage = user.image
+        let image = oldImage;
         if (req.file) {
             image = `user/${req.file.filename}`;
         }
@@ -213,7 +214,8 @@ const userController = {
 
         user.email = email
 
-        if (image) {
+        if (image !== oldImage) {
+            // Remove a imagem antiga se houver uma nova
             const imageName = image
             user.image = imageName
         }
