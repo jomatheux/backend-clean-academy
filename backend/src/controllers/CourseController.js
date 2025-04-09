@@ -97,12 +97,12 @@ const courseController = {
 
     addVideoToCourse: async (req, res) => {
         const courseId = req.params.id;
-        const { title, duration } = req.body;
+        const { title, duration, description } = req.body;
         const image = `video/${req.files.image[0].filename}`;
         const url = `video/${req.files.url[0].filename}`;
         
         try {
-            const video = await addVideoToCourse(courseId, { title: title, url: url, duration: duration, image: image });
+            const video = await addVideoToCourse(courseId, { title: title, url: url, description: description, duration: duration, image: image });
             res.status(201).json({ message: 'Vídeo adicionado com sucesso!', video });
         } catch (error) {
             res.status(500).json({ message: 'Erro ao adicionar vídeo', error });
@@ -122,7 +122,7 @@ const courseController = {
     updateVideoFromCourse: async (req, res) => {
         const id = req.params.id;
         const video = await Video.findByPk(id);
-        const { title, duration } = req.body;
+        const { title, duration, description } = req.body;
         let oldImage = video.image;
         let oldUrl = video.url;
         let image = oldImage;
@@ -133,7 +133,7 @@ const courseController = {
         if (req.files.url[0]) {
             url = `video/${req.files.url[0]}`;
         }
-        const videoData = { title: title, url: url, duration: duration, image: image };
+        const videoData = { title: title, url: url, description: description, duration: duration, image: image };
         if (!video) {
             return res.status(404).json({ error: 'Vídeo não encontrado!' })
         }
