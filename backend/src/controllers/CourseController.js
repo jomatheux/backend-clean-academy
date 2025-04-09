@@ -98,8 +98,14 @@ const courseController = {
     addVideoToCourse: async (req, res) => {
         const courseId = req.params.id;
         const { title, duration, description } = req.body;
-        const image = `video/${req.files.image[0].filename}`;
-        const url = `video/${req.files.url[0].filename}`;
+        let image = null;
+        let url = null;
+        if (req.files.video[0]) {
+            image = `video/${req.files.image[0]}`;
+        }
+        if (req.files.url[0]) {
+            url = `video/${req.files.url[0]}`;
+        }
         
         try {
             const video = await addVideoToCourse(courseId, { title: title, url: url, description: description, duration: duration, image: image });
