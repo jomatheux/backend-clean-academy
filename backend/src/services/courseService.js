@@ -59,6 +59,7 @@ const getCoursesWithProgressByUserId = async (userId) => {
       progress: userCourse.progress,
       level: userCourse.course.level,
       instructor: userCourse.course.instructor,
+      watchedVideos: userCourse.watchedVideos,
     }));
   } catch (error) {
     console.error('Erro ao buscar cursos do usuário:', error);
