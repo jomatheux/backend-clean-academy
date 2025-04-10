@@ -74,7 +74,7 @@ const getCourseWithVideosAndProducts = async (courseId) => {
         {
           model: Video,
           as: 'videos',
-          attributes: ['id', 'title', 'url', 'duration', 'image'], // Campos que deseja retornar
+          attributes: ['id', 'title', 'url', 'duration', 'image', 'description'], // Campos que deseja retornar
         },
         {
           model: Product,
