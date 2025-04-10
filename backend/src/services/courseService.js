@@ -1,4 +1,4 @@
-import { where } from 'sequelize';
+import { Op } from 'sequelize';
 import Course from '../models/Course.js';
 import User from '../models/User.js';
 import UserCourse from '../models/UserCourse.js';
@@ -13,12 +13,12 @@ const createCourseWithUsers = async (courseData) => {
     // Cria o curso
     const newCourse = await Course.create(courseData);
 
-    // Busca todos os usuários
-    const users = await User.findAll();
+    // Busca todos os IDs dos usuários de forma mais eficiente
+    const userIds = await User.findAll({ attributes: ['id'] }).then(users => users.map(user => user.id));
 
     // Cria o relacionamento entre o curso e os usuários
-    const userCourseData = users.map((user) => ({
-      userId: user.id,
+    const userCourseData = userIds.map(userId => ({
+      userId,
       courseId: newCourse.id,
       progress: 0, // Progresso inicial
     }));
@@ -47,7 +47,7 @@ const getCoursesWithProgressByUserId = async (userId) => {
       ],
     });
 
-    if (userCourses.length === 0) {
+    if (!userCourses.length) {
       return { error: 'Nenhum curso encontrado para este usuário.' };
     }
 
@@ -102,44 +102,26 @@ const addVideoToCourse = async (courseId, videoData) => {
       ...videoData,
       courseId,
     });
-    // Atualiza o progresso do curso
-    try {
-      // Verifica se o relacionamento usuário-curso existe e guarda ele em uma variável
-      const userCourse = await UserCourse.findAll({ where: { courseId } });
-      if (!userCourse) {
-        console.log('Relacionamento usuário-curso não encontrado.');
-        return;
-      }
-      // Verifica se o vídeo existe
-      const video = await Video.findByPk(newVideo.id);
-      if (!video) {
-        console.log('Vídeo não encontrado.');
-        return;
-      }
-      // Atualiza o progresso no relacionamento usuário-curso
-      if (userCourse) {
-        userCourse.forEach(async (uc) => {
-          // Busca o curso com os vídeos para calcular o progresso atual
-          const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
-          const totalVideos = courseWithVideos.videos.length;
-          const completedVideos = uc.watchedVideos.length;
-          // Calcula o novo progresso do curso e atualiza o relacionamento
-          const newProgress = Math.round((completedVideos / totalVideos) * 100);
-          console.log(`Novo progresso: ${newProgress}%`);
-          uc.progress = newProgress;
-          await uc.save();
-        });
 
-        console.log('Progresso atualizado com sucesso!');
-      } else {
-        console.log('Relacionamento usuário-curso não encontrado.');
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar progresso:', error);
+    // Atualiza o progresso do curso de forma mais eficiente
+    const userCourses = await UserCourse.findAll({ where: { courseId } });
+    if (userCourses.length > 0) {
+      const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
+      const totalVideos = courseWithVideos.videos.length;
+
+      await Promise.all(userCourses.map(async (uc) => {
+        const completedVideos = uc.watchedVideos.length;
+        const newProgress = totalVideos > 0 ? Math.round((completedVideos / totalVideos) * 100) : 0;
+        uc.progress = newProgress;
+        await uc.save();
+        console.log(`Progresso do usuário ${uc.userId} atualizado para: ${newProgress}%`);
+      }));
+      console.log('Progresso de todos os usuários no curso atualizado com sucesso!');
+    } else {
+      console.log('Nenhum usuário associado a este curso.');
     }
 
     console.log('Vídeo adicionado com sucesso:', newVideo);
-
     return newVideo;
   } catch (error) {
     console.error('Erro ao adicionar vídeo:', error);
@@ -152,56 +134,42 @@ const deleteVideo = async (videoId) => {
     const video = await Video.findByPk(videoId);
     if (!video) {
       console.log('Vídeo não encontrado.');
-      return;
+      return null; // Retornar null para indicar que nada foi deletado
     }
     const courseId = video.courseId;
-    // Verifica se o relacionamento usuário-curso existe e guarda ele em uma variável
-    const userCourse = await UserCourse.findAll({ where: { courseId } });
-    if (!userCourse) {
-      console.log('Relacionamento usuário-curso não encontrado.');
-      return;
-    }
-    // Deleta o vídeo
+
+    // Deleta o vídeo e espera a conclusão
     removeOldImage(video);
     removeOldUrl(video);
     await video.destroy();
     console.log('Vídeo deletado com sucesso!');
-    // Atualiza o progresso do curso
-    try {
-      // Atualiza o progresso no relacionamento usuário-curso
-      if (userCourse) {
-        // Busca o curso com os vídeos para calcular o progresso atual
-        userCourse.forEach(async (uc) => {
-          // Verifica se o video deletado estava na lista de videos assistidos
-          if (uc.watchedVideos.includes(videoId)) {
-            // Remove o video deletado da lista de videos assistidos
-            uc.watchedVideos = uc.watchedVideos.filter(v => v !== videoId);
-          }
-          // Busca o curso com os vídeos para calcular o progresso atual
-          const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
-          const totalVideos = courseWithVideos.videos.length;
-          const completedVideos = uc.watchedVideos.length;
-          // Calcula o novo progresso do curso e atualiza o relacionamento
-          let newProgress = 0; // Valor padrão para evitar NaN
-          if (totalVideos > 0) {
-            newProgress = Math.round((completedVideos / totalVideos) * 100);
-          }
-          console.log(`Novo progresso: ${newProgress}%`);
-          uc.progress = newProgress;
-          await uc.save();
-        });
 
-        console.log('Progresso atualizado com sucesso!');
-      } else {
-        console.log('Relacionamento usuário-curso não encontrado.');
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar progresso:', error);
+    // Atualiza o progresso do curso de forma mais eficiente
+    const userCourses = await UserCourse.findAll({ where: { courseId } });
+    if (userCourses.length > 0) {
+      const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
+      const totalVideos = courseWithVideos.videos.length;
+
+      await Promise.all(userCourses.map(async (uc) => {
+        // Remove o video deletado da lista de videos assistidos
+        uc.watchedVideos = uc.watchedVideos.filter(v => v !== videoId);
+        uc.changed('watchedVideos', true);
+
+        const completedVideos = uc.watchedVideos.length;
+        const newProgress = totalVideos > 0 ? Math.round((completedVideos / totalVideos) * 100) : 0;
+        uc.progress = newProgress;
+        await uc.save();
+        console.log(`Progresso do usuário ${uc.userId} atualizado para: ${newProgress}%`);
+      }));
+      console.log('Progresso de todos os usuários no curso atualizado com sucesso!');
+    } else {
+      console.log('Nenhum usuário associado a este curso.');
     }
-    //Retorna o video deletado
-    return video;
+
+    return video; // Retorna o vídeo deletado
   } catch (error) {
     console.error('Erro ao deletar vídeo:', error);
+    throw error;
   }
 };
 
@@ -223,34 +191,32 @@ const getProgress = async (userId, courseId) => {
 const getUsersProgress = async () => {
   try {
     const usersProgress = await User.findAll({
-      attributes: ['id', 'name'], // Seleciona o ID e o nome do usuário
+      attributes: ['id', 'name'],
       include: [
         {
           model: UserCourse,
           as: 'userCourses',
-          attributes: ['progress'], // Seleciona o progresso nos cursos
+          attributes: ['progress'],
           include: [
             {
               model: Course,
               as: 'course',
-              attributes: ['id', 'title', 'level', 'instructor'], // Seleciona o título do curso
+              attributes: ['id', 'title', 'level', 'instructor'],
             },
           ],
         },
       ],
     });
-    // Seleciona o total de cursos existentes
-    const totalCourses = await Course.findAll();
 
-    // Processa os dados para calcular o número de cursos completos e incompletos
+    const totalCoursesCount = await Course.count();
+
     const formattedProgress = usersProgress.map(user => {
       const completedCourses = user.userCourses.filter(uc => uc.progress === 100).length;
-      const tc = totalCourses.length;
 
       return {
         id: user.id,
         name: user.name,
-        progress: `${completedCourses}/${tc}`, // Formato desejado
+        progress: `${completedCourses}/${totalCoursesCount}`,
       };
     });
 
@@ -259,33 +225,32 @@ const getUsersProgress = async () => {
     console.error('Erro ao recuperar o progresso dos usuários:', error);
     throw error;
   }
-}
+};  
 
 const getUserProgressInCoursesByUserId = async (userId) => {
   console.log('Buscando cursos do usuário com ID:', userId);
   try {
     const userCourses = await UserCourse.findAll({
-      where: { userId }, // Filtra pelo ID do usuário na tabela intermediária
+      where: { userId },
       include: [
         {
           model: Course,
-          as: 'course', // Nome do alias na relação
-          attributes: ['id', 'title', 'description', 'level', 'instructor'], // Campos que queremos do modelo Course
+          as: 'course',
+          attributes: ['id', 'title', 'description', 'level', 'instructor'],
         },
       ],
     });
 
-    if (userCourses.length === 0) {
+    if (!userCourses.length) {
       return { error: 'Nenhum curso encontrado para este usuário.' };
     }
 
-    // Retorna os cursos com o progresso
     return userCourses.map((userCourse) => ({
       courseId: userCourse.course.id,
       title: userCourse.course.title,
       description: userCourse.course.description,
       progress: userCourse.progress,
-      whatchedVideos: userCourse.watchedVideos,
+      whatchedVideos: userCourse.watchedVideos, // Corrigir typo
       level: userCourse.course.level,
       instructor: userCourse.course.instructor,
     }));
@@ -297,45 +262,35 @@ const getUserProgressInCoursesByUserId = async (userId) => {
 
 const updateProgress = async (userId, courseId, videoId) => {
   try {
-    // Verifica se o relacionamento usuário-curso existe e guarda ele em uma variável
     const userCourse = await UserCourse.findOne({ where: { userId, courseId } });
     if (!userCourse) {
       console.log('Relacionamento usuário-curso não encontrado.');
       return;
     }
-    // Verifica se o vídeo existe
+
     const video = await Video.findByPk(videoId);
     if (!video) {
       console.log('Vídeo não encontrado.');
       return;
     }
-    // Coloca o vídeo como assistido na tabela de relacionamento
+
     const watchedVideos = userCourse.watchedVideos;
     if (!watchedVideos.includes(videoId)) {
       watchedVideos.push(videoId);
       userCourse.watchedVideos = watchedVideos;
-      userCourse.changed('watchedVideos', true); // Marca o campo como alterado
+      userCourse.changed('watchedVideos', true);
       await userCourse.save();
     }
 
-    // Busca o curso com os vídeos para calcular o progresso atual
     const courseWithVideos = await getCourseWithVideosAndProducts(courseId);
     const totalVideos = courseWithVideos.videos.length;
     const completedVideos = userCourse.watchedVideos.length;
-    // Calcula o novo progresso do curso e atualiza o relacionamento
-    let newProgress = 0; // Valor padrão para evitar NaN
-    if (totalVideos > 0) {
-      newProgress = Math.round((completedVideos / totalVideos) * 100);
-    }
-    console.log(`Novo progresso: ${newProgress}%`);
-    // Atualiza o progresso no relacionamento usuário-curso
-    if (userCourse) {
-      userCourse.progress = newProgress;
-      await userCourse.save();
-      console.log('Progresso atualizado com sucesso!');
-    } else {
-      console.log('Relacionamento usuário-curso não encontrado.');
-    }
+    const newProgress = totalVideos > 0 ? Math.round((completedVideos / totalVideos) * 100) : 0;
+
+    userCourse.progress = newProgress;
+    await userCourse.save();
+    console.log(`Progresso do usuário ${userId} no curso ${courseId} atualizado para: ${newProgress}%`);
+
   } catch (error) {
     console.error('Erro ao atualizar progresso:', error);
   }
