@@ -14,7 +14,7 @@ const courseController = {
                 title: req.body.title,
                 description: req.body.description,
                 duration: req.body.duration,
-                image: `course/${req.file.filename}`,
+                image: req.file.location,
                 level: req.body.level,
                 instructor: req.body.instructor,
             };
@@ -100,7 +100,7 @@ const courseController = {
         const { title, duration, description } = req.body;
         let url = null;
         if (req.files.url[0]) {
-            url = `video/${req.files.url[0].filename}`;
+            url = `video/${req.file.filename}`;
         }
         
         try {
@@ -128,7 +128,7 @@ const courseController = {
         let oldUrl = video.url;
         let url = oldUrl;
         if (req.files.url[0]) {
-            url = `video/${req.files.url[0]}`;
+            url = `video/${req.file.filename}`;
         }
         const videoData = { title: title, url: url, description: description, duration: duration };
         if (!video) {
