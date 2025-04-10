@@ -1,7 +1,7 @@
 import fs from 'fs';
 
 // Função para remover a url antiga de um entidade
-const removeOldImage = (entity) => {
+const removeOldUrl = (entity) => {
     if (!entity.url) {
         console.log("Nenhuma url antiga para deletar.");
         return;
@@ -16,4 +16,4 @@ const removeOldImage = (entity) => {
     });
 }
 
-export default removeOldImage;
+export default removeOldUrl;
