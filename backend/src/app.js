@@ -6,6 +6,9 @@ import db from './config/db.js';
 import routes from './routes/router.js';
 import { fileURLToPath } from "url";
 import path from 'path';
+import swaggerUi from 'swagger-ui-express';
+import { readFileSync } from 'fs';
+const swaggerDocument = JSON.parse(readFileSync('./src/swagger-output.json', 'utf-8')); // Carrega o JSON manualmente
 
 const app = express();
 
@@ -32,6 +35,9 @@ app.use('/api/user', express.static(path.join(__dirname, 'public/user')));
 
 // Configurando rotas
 app.use('/api', routes);
+
+// Configurando Swagger
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 db.sync().then(() => {
     console.log('Conectado ao banco de dados');

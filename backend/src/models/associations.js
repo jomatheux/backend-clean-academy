@@ -13,15 +13,16 @@ Course.belongsToMany(User, { through: UserCourse, foreignKey: 'courseId', as: 'u
 
 // Relacionamento
 Course.hasMany(Video, { foreignKey: 'courseId', as: 'videos' });
-Video.belongsTo(Course, { foreignKey: 'courseId', as: 'course' });
+Video.belongsTo(Course, { foreignKey: 'courseId', as: 'courses' });
 
 Course.hasMany(Product, { foreignKey: 'courseId', as: 'products' });
-Product.belongsTo(Course, { foreignKey: 'courseId', as: 'course' });
+Product.belongsTo(Course, { foreignKey: 'courseId', as: 'courses' });
 
-Test.belongsTo(Course, { foreignKey: 'courseId', as: 'course' });
-Course.hasOne(Test, { foreignKey: 'courseId', as: 'test' });
+Test.belongsTo(Course, { foreignKey: 'courseId', as: 'courses' });
+Course.hasOne(Test, { foreignKey: 'courseId', as: 'tests' });
 
-Report.belongsTo(Test, { foreignKey: 'testId', as: 'test' });
+Report.belongsTo(Test, { foreignKey: 'testId', as: 'tests' });
+Test.hasMany(Report, { foreignKey: 'testId', as: 'reports' });
 Report.belongsTo(User, { foreignKey: 'userId', as: 'users' });
 
 

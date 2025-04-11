@@ -29,10 +29,10 @@ const UserCourse = sequelize.define('UserCourse', {
 // UserCourse.belongsTo(User, { foreignKey: 'userId', as: 'user' });
 // UserCourse.belongsTo(Course, { foreignKey: 'courseId', as: 'course' });
 
-UserCourse.belongsTo(User, { as: 'user', foreignKey: 'userId' },);
+UserCourse.belongsTo(User, { as: 'users', foreignKey: 'userId' },);
 User.hasMany(UserCourse, { as: 'userCourses', foreignKey: 'userId' });
 
-UserCourse.belongsTo(Course, { as: 'course', foreignKey: 'courseId' });
+UserCourse.belongsTo(Course, { as: 'courses', foreignKey: 'courseId' });
 Course.hasMany(UserCourse, { as: 'userCourses', foreignKey: 'courseId' });
 
 export default UserCourse;

@@ -1,38 +1,38 @@
 import Product from "../models/Product.js";
-import { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct } from "../services/productService.js";
+import productService from "../services/ProductService.js";
 import removeOldImage from "../helpers/removeOldImage.js";
 
-const productController = {
-    // Criar um novo produto
-    createProduct: async (req, res) => {
+class ProductController {
+    constructor(productService) {
+        this.productService = productService;
+    }
+
+    async createProduct(req, res) {
         const courseId = req.params.id;
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
         const image = `product/${req.file.filename}`;
 
-        const product = await createProduct(courseId, { name, image, description });
-        res.status(201).json(product)
-    },
+        const product = await this.productService.createProduct(courseId, { name, image, description });
+        res.status(201).json(product);
+    }
 
-    // Retornar todos os produtos
-    getAllProducts: async (req, res) => {
-        const products = await getAllProducts();
+    async getAllProducts(req, res) {
+        const products = await this.productService.getAllProducts();
         console.log(products);
         if (!products) return res.status(404).json("Nenhum produto encontrado.");
-        res.json(products)
-    },
+        res.json(products);
+    }
 
-    // Retornar um produto específico
-    getProductById: async (req, res) => {
+    async getProductById(req, res) {
         const { id } = req.params;
-        const product = await getProductById(id);
+        const product = await this.productService.getProductById(id);
         if (!product) return res.status(404).json("Produto não encontrado.");
-        res.json(product)
-    },
+        res.json(product);
+    }
 
-    // Atualizar um produto
-    updateProduct: async (req, res) => {
+    async updateProduct(req, res) {
         const { id } = req.params;
         const { title, description } = req.body;
         let oldImage = await Product.findByPk(id).then(p => p.image);
@@ -41,45 +41,41 @@ const productController = {
             image = `product/${req.file.filename}`;
         }
         const data = { title, description, image };
-        const product = await Product.findByPk(id)
+        const product = await Product.findByPk(id);
         if (!product) {
             return res.status(404).json({ error: 'Produto não encontrado!' });
         }
         if (image !== oldImage) {
-            // Remove a imagem antiga se houver uma nova
             removeOldImage(product);
         }
-        const updatedProduct = await updateProduct(id, data);
+        const updatedProduct = await this.productService.updateProduct(id, data);
         if (!updatedProduct) return res.status(404).json("Produto não encontrado.");
-        res.json(updatedProduct)
-    },
+        res.json(updatedProduct);
+    }
 
-    // Deletar um produto
-    deleteProduct: async (req, res) => {
+    async deleteProduct(req, res) {
         const { id } = req.params;
         const product = await Product.findByPk(id);
         if (!product) return res.status(404).json({ error: 'Produto não encontrado!' });
         removeOldImage(product);
-        const deletedProduct = await deleteProduct(id);
+        const deletedProduct = await this.productService.deleteProduct(id);
         if (!deletedProduct) return res.status(404).json("Produto não encontrado.");
-        res.status(204).send()
-    },
+        res.status(204).send();
+    }
 
-    // Retornar todos os produtos de um curso específico
-    getCourseProducts: async (req, res) => {
+    async getCourseProducts(req, res) {
         const { id } = req.params;
         const products = await Product.findAll({ where: { courseId: id } });
         if (!products) return res.status(404).json("Nenhum produto encontrado.");
-        res.json(products)
-    },
+        res.json(products);
+    }
 
-    // Retornar um produto específico de um curso específico
-    getCourseProductById: async (req, res) => {
+    async getCourseProductById(req, res) {
         const { courseId, productId } = req.params;
         const product = await Product.findByPk(productId, { where: { courseId: courseId } });
         if (!product) return res.status(404).json("Produto não encontrado.");
-        res.json(product)
-    },
+        res.json(product);
+    }
 }
 
-export default productController;
+export default new ProductController(productService);

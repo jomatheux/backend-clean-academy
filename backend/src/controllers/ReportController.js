@@ -1,25 +1,29 @@
-import { generateReport, getReportOfUser, registerAttempt } from "../services/reportService.js"
+import reportService from "../services/ReportService.js";
 import getToken from "../helpers/get-token.js";
 import getUserByToken from "../helpers/get-user-by-token.js";
 
-const reportController = {
-    generateReport: async (req, res) => {
-        const token = getToken(req);
-        const user = await getUserByToken(token, req, res);
-        const userId = user.id;
-        const testId = req.params.id
-        const receivedGrade = req.body.receivedGrade
-        const report = await registerAttempt(userId, testId, receivedGrade);
-        res.json(report);
-    },
+class ReportController {
+    constructor(reportService) {
+        this.reportService = reportService;
+    }
 
-    getReportOfUser: async (req, res) => {
+    async generateReport(req, res) {
         const token = getToken(req);
         const user = await getUserByToken(token, req, res);
         const userId = user.id;
-        const report = await getReportOfUser(userId);
+        const testId = req.params.id;
+        const receivedGrade = req.body.receivedGrade;
+        const report = await this.reportService.registerAttempt(userId, testId, receivedGrade);
         res.json(report);
-    },
+    }
+
+    async getReportOfUser(req, res) {
+        const token = getToken(req);
+        const user = await getUserByToken(token, req, res);
+        const userId = user.id;
+        const report = await this.reportService.getReportOfUser(userId);
+        res.json(report);
+    }
 }
 
-export default reportController;
+export default new ReportController(reportService);

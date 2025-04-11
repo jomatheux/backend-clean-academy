@@ -1,23 +1,29 @@
 import { Product } from "../models/associations.js";
 
-const createProduct = (courseId, product) => {
-    return Product.create({ ...product, courseId });
+class ProductService {
+    constructor(productModel) {
+        this.productModel = productModel;
+    }
+
+    async createProduct(courseId, product) {
+        return this.productModel.create({ ...product, courseId });
+    }
+
+    async getAllProducts() {
+        return this.productModel.findAll();
+    }
+
+    async getProductById(id) {
+        return this.productModel.findByPk(id);
+    }
+
+    async updateProduct(id, product) {
+        return this.productModel.update(product, { where: { id } });
+    }
+
+    async deleteProduct(id) {
+        return this.productModel.destroy({ where: { id } });
+    }
 }
 
-const getAllProducts = () => {
-    return Product.findAll();
-}
-
-const getProductById = (id) => {
-    return Product.findByPk(id);
-}
-
-const updateProduct = (id, product) => {
-    return Product.update(product, { where: { id } });
-}
-
-const deleteProduct = (id) => {
-    return Product.destroy({ where: { id } });
-}
-
-export { createProduct, getAllProducts, getProductById, updateProduct, deleteProduct };
+export default new ProductService(Product);
