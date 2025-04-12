@@ -249,6 +249,22 @@ class CourseService {
                         model: this.courseModel,
                         as: 'courses',
                         attributes: ['id', 'title', 'description', 'level', 'instructor'],
+                        include: [
+                            {
+                                model: this.testModel,
+                                as: 'tests',
+                                attributes: ['id', 'questions', 'qntQuestions', 'minGrade'],
+                                include: [
+                                    {
+                                        model: this.reportModel,
+                                        as: 'reports',
+                                        where: { userId },
+                                        required: false,
+                                        attributes: ['id', 'grade', 'createdAt'],
+                                    },
+                                ]
+                            }
+                        ],
                     },
                 ],
             });
@@ -265,6 +281,7 @@ class CourseService {
                 level: userCourse.courses.level,
                 instructor: userCourse.courses.instructor,
                 watchedVideos: userCourse.watchedVideos,
+                tests: userCourse.courses.tests
             }));
         } catch (error) {
             console.error('Erro ao buscar cursos do usuário:', error);
