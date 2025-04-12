@@ -11,11 +11,17 @@ services:
       NODE_ENV: development
       DB_HOST: db
       DB_USER: root
-      DB_PASSWORD: 123456
+      DB_PASSWORD: example
       DB_NAME: clean_academy
       JWT_SECRET: your_jwt_secret
+      MINIO_ENDPOINT: http://minio:9000 # Endpoint para acessar o MinIO
+      MINIO_PORT: 9000
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+      MINIO_BUCKET: my-bucket # Nome do bucket padrão (opcional)
     depends_on:
       - db
+      - minio
 
   db:
     image: mysql:8.0
@@ -24,12 +30,30 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: clean_academy
-      MYSQL_USER: root
-      MYSQL_PASSWORD: 123456
     ports:
       - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
 
+  minio:
+    image: minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001" # Porta para o MinIO Console
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+      MINIO_SERVER_ADDRESS: "0.0.0.0:9000" # Garante que o MinIO escute em todas as interfaces
+    volumes:
+      - minio_data:/data
+    command: server --console-address ":9001" /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+
 volumes:
   db_data:
+  minio_data:
