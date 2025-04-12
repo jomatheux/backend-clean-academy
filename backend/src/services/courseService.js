@@ -285,7 +285,7 @@ class CourseService {
                 userCourse.changed('watchedVideos', true);
             }
 
-            const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId);
+            const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
             const totalVideos = courseWithVideos.videos.length;
             const completedVideos = userCourse.watchedVideos.length;
             const newProgress = totalVideos > 0 ? Math.round((completedVideos / totalVideos) * 100) : 0;
