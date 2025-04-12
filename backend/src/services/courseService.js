@@ -57,12 +57,12 @@ class CourseService {
             }
 
             return userCourses.map((userCourse) => ({
-                courseId: userCourse.course.id,
-                title: userCourse.course.title,
-                description: userCourse.course.description,
+                courseId: userCourse.courses.id,
+                title: userCourse.courses.title,
+                description: userCourse.courses.description,
                 progress: userCourse.progress,
-                level: userCourse.course.level,
-                instructor: userCourse.course.instructor,
+                level: userCourse.courses.level,
+                instructor: userCourse.courses.instructor,
                 watchedVideos: userCourse.watchedVideos,
             }));
         } catch (error) {
@@ -258,12 +258,12 @@ class CourseService {
             }
 
             return userCourses.map((userCourse) => ({
-                courseId: userCourse.course.id,
-                title: userCourse.course.title,
-                description: userCourse.course.description,
+                courseId: userCourse.courses.id,
+                title: userCourse.courses.title,
+                description: userCourse.courses.description,
                 progress: userCourse.progress,
-                level: userCourse.course.level,
-                instructor: userCourse.course.instructor,
+                level: userCourse.courses.level,
+                instructor: userCourse.courses.instructor,
                 watchedVideos: userCourse.watchedVideos,
             }));
         } catch (error) {
