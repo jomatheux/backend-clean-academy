@@ -113,7 +113,7 @@ class CourseService {
         }
     }
 
-    async addVideoToCourse(courseId, videoData) {
+    async addVideoToCourse(courseId, videoData, userId) {
         try {
             const newVideo = await this.videoModel.create({
                 ...videoData,
@@ -122,7 +122,7 @@ class CourseService {
 
             const userCourses = await this.userCourseModel.findAll({ where: { courseId } });
             if (userCourses.length > 0) {
-                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId);
+                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
                 const totalVideos = courseWithVideos.videos.length;
 
                 await Promise.all(userCourses.map(async (uc) => {
@@ -145,7 +145,7 @@ class CourseService {
         }
     }
 
-    async deleteVideo(videoId) {
+    async deleteVideo(videoId, userId) {
         try {
             const video = await this.videoModel.findByPk(videoId);
             if (!video) {
@@ -161,7 +161,7 @@ class CourseService {
 
             const userCourses = await this.userCourseModel.findAll({ where: { courseId } });
             if (userCourses.length > 0) {
-                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId);
+                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
                 const totalVideos = courseWithVideos.videos.length;
 
                 await Promise.all(userCourses.map(async (uc) => {

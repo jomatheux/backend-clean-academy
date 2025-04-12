@@ -95,13 +95,15 @@ class CourseController {
     async addVideoToCourse(req, res) {
         const courseId = req.params.id;
         const { title, duration, description } = req.body;
+        const token = getToken(req);
+        const user = await getUserByToken(token, req, res);
         let url = null;
         if (req.files.url[0]) {
             url = `video/${req.files.url[0].filename}`;
         }
 
         try {
-            const video = await this.courseService.addVideoToCourse(courseId, { title, url, description, duration });
+            const video = await this.courseService.addVideoToCourse(courseId, { title, url, description, duration }, user.id);
             res.status(201).json({ message: 'Vídeo adicionado com sucesso!', video });
         } catch (error) {
             res.status(500).json({ message: 'Erro ao adicionar vídeo', error });
@@ -114,7 +116,9 @@ class CourseController {
         if (!video) {
             return res.status(404).json({ error: 'Vídeo não encontrado!' });
         }
-        const deletedVideo = await this.courseService.deleteVideo(video.id);
+        const token = getToken(req);
+        const user = await getUserByToken(token, req, res);
+        const deletedVideo = await this.courseService.deleteVideo(video.id, user.id);
         res.status(204).send(deletedVideo);
     }
 
