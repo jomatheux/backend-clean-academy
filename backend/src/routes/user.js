@@ -17,7 +17,7 @@ import upload from "../helpers/upload.js";
  *     summary: Registra um novo usuário
  *     description: Registra um novo usuário no sistema
  */
-router.post("/register", authorizeAdmin, upload("image"), UserController.register.bind(UserController)); //admin
+router.post("/register", authorizeAdmin, upload.single("image"), UserController.register.bind(UserController)); //admin
 
 /**
  * @swagger
@@ -77,7 +77,7 @@ router.post("/users/auth", authorizeAdmin, async (req, res) => {
 router.patch(
     "/edit/:id",
     authorizeAdmin,
-    upload("image"),
+    upload.single("image"),
     UserController.editUserById.bind(UserController)); //admin
 
 /**

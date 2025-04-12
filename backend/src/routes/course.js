@@ -28,7 +28,7 @@ router.get("/all", checkToken, CourseController.getAllCourses.bind(CourseControl
 
 router.get("/:id", checkToken, CourseController.getCourseById.bind(CourseController));
 
-router.patch("/update/:id", authorizeAdmin, upload.single("image"), CourseController.updateCourseById).bind(CourseController); //admin
+router.patch("/update/:id", authorizeAdmin, upload.single("image"), CourseController.updateCourseById.bind(CourseController)); //admin
 
 router.delete("/delete/:id", authorizeAdmin, CourseController.deleteCourseById.bind(CourseController)); //admin
 
