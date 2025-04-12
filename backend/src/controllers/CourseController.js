@@ -84,7 +84,7 @@ class CourseController {
     async getCoursesWithProgress(req, res) {
         const token = await getToken(req);
         if (!token) return res.status(404).json({ error: 'Acesso não autorizado!' });
-        const user = await getUserByToken(token);
+        const user = await getUserByToken(token, req, res);
         if (!user.id) {
             return res.status(400).json({ error: 'Informe o ID do usuário!' });
         }
