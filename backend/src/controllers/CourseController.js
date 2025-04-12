@@ -3,7 +3,7 @@ import getUserByToken from '../helpers/get-user-by-token.js';
 import removeOldImage from '../helpers/removeOldImage.js';
 import removeOldUrl from '../helpers/removeOldUrl.js';
 import { User, Course, UserCourse, Video } from '../models/associations.js';
-import courseService from '../services/CourseService.js';
+import courseService from '../services/courseService.js';
 
 class CourseController {
     constructor(courseService) {

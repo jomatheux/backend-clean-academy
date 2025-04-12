@@ -5,7 +5,7 @@ import 'dotenv/config';
 // helpers
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
-import userService from '../services/UserService.js';
+import userService from '../services/userService.js';
 import removeOldImage from '../helpers/removeOldImage.js';
 
 class UserController {

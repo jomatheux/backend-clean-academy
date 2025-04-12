@@ -1,5 +1,5 @@
 import Product from "../models/Product.js";
-import productService from "../services/ProductService.js";
+import productService from "../services/productService.js";
 import removeOldImage from "../helpers/removeOldImage.js";
 
 class ProductController {

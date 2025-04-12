@@ -1,4 +1,4 @@
-import testService from "../services/TestService.js";
+import testService from "../services/testService.js";
 import getToken from "../helpers/get-token.js";
 import getUserByToken from "../helpers/get-user-by-token.js";
 import Test from "../models/Test.js";

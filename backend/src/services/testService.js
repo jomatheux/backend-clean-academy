@@ -1,5 +1,5 @@
 import { UserCourse, Test, Report, Course } from '../models/associations.js';
-import reportService  from './ReportService.js';
+import reportService  from './reportService.js';
 
 class TestService {
     constructor(testModel, userCourseModel, reportModel, courseModel, reportService) {

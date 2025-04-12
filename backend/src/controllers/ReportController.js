@@ -1,4 +1,4 @@
-import reportService from "../services/ReportService.js";
+import reportService from "../services/reportService.js";
 import getToken from "../helpers/get-token.js";
 import getUserByToken from "../helpers/get-user-by-token.js";
 
