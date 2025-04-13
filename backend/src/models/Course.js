@@ -25,7 +25,7 @@ const Course = sequelize.define('Course', {
         allowNull: true,
     },
     level:{
-        type: DataTypes.ENUM('Begginer', 'Intermediate', 'Advanced'),
+        type: DataTypes.ENUM('Beginner', 'Intermediate', 'Advanced'),
         allowNull: false,
     },
     instructor:{

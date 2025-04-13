@@ -5,7 +5,7 @@ CREATE TABLE `tb_courses` (
     `duration` DOUBLE NOT NULL,
     `description` VARCHAR(255) NOT NULL,
     `image` VARCHAR(255) NULL,
-    `level` ENUM('Begginer', 'Intermediate', 'Advanced') NOT NULL,
+    `level` ENUM('Beginner', 'Intermediate', 'Advanced') NOT NULL,
     `createdAt` DATETIME(0) NOT NULL,
     `updatedAt` DATETIME(0) NOT NULL,
 

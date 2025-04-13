@@ -111,7 +111,7 @@ model tb_videos {
 }
 
 enum tb_courses_level {
-  Begginer
+  Beginner
   Intermediate
   Advanced
 }
