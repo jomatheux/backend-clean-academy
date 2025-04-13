@@ -7,37 +7,12 @@
   },
   "host": "localhost:5000",
   "basePath": "/",
-  "tags": [
-    {
-      "name": "Users",
-      "description": "Rotas relacionadas a usuários"
-    },
-    {
-      "name": "Courses",
-      "description": "Rotas relacionadas aos cursos"
-    },
-    {
-      "name": "Tests",
-      "description": "Rotas relacionadas aos testes"
-    },
-    {
-      "name": "Products",
-      "description": "Rotas relacionadas aos produtos"
-    },
-    {
-      "name": "Reports",
-      "description": "Rotas relacionadas aos relatórios"
-    }
-  ],
   "schemes": [
     "http"
   ],
   "paths": {
-    "/register": {
+    "/users/register": {
       "post": {
-        "tags": [
-          "Users"
-        ],
         "description": "",
         "parameters": [
           {
@@ -78,11 +53,8 @@
         }
       }
     },
-    "/login": {
+    "/users/login": {
       "post": {
-        "tags": [
-          "Users"
-        ],
         "description": "",
         "parameters": [
           {
@@ -108,11 +80,8 @@
         }
       }
     },
-    "/checkuser": {
+    "/users/checkuser": {
       "get": {
-        "tags": [
-          "Users"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -124,11 +93,8 @@
         }
       }
     },
-    "/{id}": {
+    "/users/{id}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
         "description": "",
         "parameters": [
           {
@@ -144,15 +110,86 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "example": "any"
+                },
+                "email": {
+                  "example": "any"
+                },
+                "cpf": {
+                  "example": "any"
+                },
+                "role": {
+                  "example": "any"
+                },
+                "password": {
+                  "example": "any"
+                },
+                "confirmpassword": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "422": {
+            "description": "Unprocessable Entity"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
           }
         }
       }
     },
     "/users/auth": {
       "post": {
-        "tags": [
-          "Users"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -161,95 +198,8 @@
         }
       }
     },
-    "/edit/{id}": {
-      "patch": {
-        "tags": [
-          "Users"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "example": "any"
-                },
-                "email": {
-                  "example": "any"
-                },
-                "cpf": {
-                  "example": "any"
-                },
-                "role": {
-                  "example": "any"
-                },
-                "password": {
-                  "example": "any"
-                },
-                "confirmpassword": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "422": {
-            "description": "Unprocessable Entity"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/delete/{id}": {
-      "delete": {
-        "tags": [
-          "Users"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/logout": {
+    "/users/logout": {
       "post": {
-        "tags": [
-          "Users"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -260,9 +210,6 @@
     },
     "/courses/create": {
       "post": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -300,143 +247,8 @@
         }
       }
     },
-    "/courses/addvideo/{id}": {
-      "post": {
-        "tags": [
-          "Courses"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "duration": {
-                  "example": "any"
-                },
-                "description": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/courses/deletevideo/{id}": {
-      "delete": {
-        "tags": [
-          "Courses"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/courses/update/video/{id}": {
-      "patch": {
-        "tags": [
-          "Courses"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "title": {
-                  "example": "any"
-                },
-                "duration": {
-                  "example": "any"
-                },
-                "description": {
-                  "example": "any"
-                }
-              }
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/courses/video/{id}": {
-      "get": {
-        "tags": [
-          "Courses"
-        ],
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
     "/courses/all": {
       "get": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -447,9 +259,6 @@
     },
     "/courses/{id}": {
       "get": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -467,13 +276,8 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/courses/update/{id}": {
+      },
       "patch": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -515,13 +319,8 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/courses/delete/{id}": {
+      },
       "delete": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -543,9 +342,6 @@
     },
     "/courses/progress/incourse": {
       "get": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -562,9 +358,6 @@
     },
     "/courses/progress/{id}": {
       "get": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -587,9 +380,6 @@
         }
       },
       "post": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -623,9 +413,6 @@
     },
     "/courses/users/progress/{id}": {
       "get": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "parameters": [
           {
@@ -650,9 +437,6 @@
     },
     "/courses/users/progress": {
       "get": {
-        "tags": [
-          "Courses"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -666,9 +450,6 @@
     },
     "/tests/create": {
       "post": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "responses": {
           "201": {
@@ -682,9 +463,6 @@
     },
     "/tests/all": {
       "get": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -698,9 +476,6 @@
     },
     "/tests/{id}": {
       "get": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "parameters": [
           {
@@ -720,9 +495,6 @@
         }
       },
       "delete": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "parameters": [
           {
@@ -744,9 +516,6 @@
     },
     "/tests/update/{id}": {
       "patch": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "parameters": [
           {
@@ -768,9 +537,6 @@
     },
     "/tests/taketest/{id}": {
       "post": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "parameters": [
           {
@@ -804,9 +570,6 @@
     },
     "/tests/releasetest/{id}": {
       "post": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "parameters": [
           {
@@ -828,9 +591,6 @@
     },
     "/tests/getByCourseId/{id}": {
       "get": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "parameters": [
           {
@@ -852,9 +612,6 @@
     },
     "/tests/getByUserToken": {
       "get": {
-        "tags": [
-          "Tests"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -868,9 +625,6 @@
     },
     "/products/create/{id}": {
       "post": {
-        "tags": [
-          "Products"
-        ],
         "description": "",
         "parameters": [
           {
@@ -910,9 +664,6 @@
     },
     "/products/all": {
       "get": {
-        "tags": [
-          "Products"
-        ],
         "description": "",
         "responses": {
           "200": {
@@ -926,9 +677,6 @@
     },
     "/products/{id}": {
       "get": {
-        "tags": [
-          "Products"
-        ],
         "description": "",
         "parameters": [
           {
@@ -950,9 +698,6 @@
     },
     "/products/course/{id}": {
       "get": {
-        "tags": [
-          "Products"
-        ],
         "description": "",
         "parameters": [
           {
@@ -974,9 +719,6 @@
     },
     "/products/edit/{id}": {
       "patch": {
-        "tags": [
-          "Products"
-        ],
         "description": "",
         "parameters": [
           {
@@ -1013,9 +755,6 @@
     },
     "/products/delete/{id}": {
       "delete": {
-        "tags": [
-          "Products"
-        ],
         "description": "",
         "parameters": [
           {
@@ -1037,9 +776,6 @@
     },
     "/reports/generate/{id}": {
       "post": {
-        "tags": [
-          "Reports"
-        ],
         "description": "",
         "parameters": [
           {
@@ -1070,13 +806,124 @@
     },
     "/reports/get-report": {
       "get": {
-        "tags": [
-          "Reports"
-        ],
         "description": "",
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/videos/{id}": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "any"
+                },
+                "duration": {
+                  "example": "any"
+                },
+                "description": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      },
+      "delete": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "example": "any"
+                },
+                "duration": {
+                  "example": "any"
+                },
+                "description": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      },
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }

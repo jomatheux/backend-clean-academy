@@ -61,7 +61,7 @@ router.get("/:id", authorizeAdmin, UserController.getUserById.bind(UserControlle
  *     summary: Edita um usuário
  *     description: Atualiza os dados de um usuário específico
  */
-router.post("/users/auth", authorizeAdmin, async (req, res) => {
+router.post("/auth", authorizeAdmin, async (req, res) => {
     res.json({ message: "Admin authenticated" });
 }); //admin
 
@@ -75,7 +75,7 @@ router.post("/users/auth", authorizeAdmin, async (req, res) => {
  *     description: Atualiza os dados de um usuário específico
  */
 router.patch(
-    "/edit/:id",
+    "/:id",
     authorizeAdmin,
     upload.single("image"),
     UserController.editUserById.bind(UserController)); //admin
@@ -89,7 +89,7 @@ router.patch(
  *     summary: Deleta um usuário
  *     description: Remove um usuário do sistema
  */
-router.delete("/delete/:id", authorizeAdmin, UserController.deleteUserById.bind(UserController)); //admin
+router.delete("/:id", authorizeAdmin, UserController.deleteUserById.bind(UserController)); //admin
 
 /**
  * @swagger

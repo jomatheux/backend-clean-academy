@@ -11,7 +11,7 @@ import userRouter from './user.js';
  *     tags:
  *       - Users
  */
-router.use("/", userRouter);
+router.use("/users", userRouter);
 
 
 import courseRouter from './course.js';
@@ -60,6 +60,17 @@ import reportRouter from './report.js';
  *       - Reports
  */
 router.use("/reports", reportRouter);
+
+import videoRouter from './video.js';
+//Rotas de vídeos
+/**
+ * @swagger
+ * /register:
+ *   post:
+ *     tags:
+ *       - Videos
+ */
+router.use("/videos", videoRouter);
 
 
 export default router;

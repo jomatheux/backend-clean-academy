@@ -21,7 +21,6 @@ try {
     console.log('Conexão com o banco de dados realizada com sucesso!');
 } catch (error) {
     console.log(`Não foi possível conectar: ${error}`);
-    setTimeout(connectDatabase, 5000); // Tentar novamente após 5 segundos
 }
 
 export default db;
