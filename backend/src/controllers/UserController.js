@@ -15,7 +15,8 @@ class UserController {
 
     async register(req, res) {
         const { name, email, cpf, role, password, confirmpassword } = req.body;
-        const image = `user/${req.file.filename}`;
+        let image = null;
+        if (req.file) image = `user/${req.file.filename}`;
 
         // validations
         if (!name) return res.status(422).json({ message: 'O nome é obrigatório!' });

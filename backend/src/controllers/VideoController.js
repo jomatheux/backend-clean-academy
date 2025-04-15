@@ -2,6 +2,8 @@ import videoService from "../services/videoService.js";
 import getToken from "../helpers/get-token.js";
 import getUserByToken from "../helpers/get-user-by-token.js";
 import Video from "../models/Video.js";
+import removeOldUrl from "../helpers/removeOldUrl.js";
+
 class VideoController {
 
     constructor(videoService, videoModel) {
