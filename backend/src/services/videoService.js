@@ -1,13 +1,15 @@
 import removeOldImage from '../helpers/removeOldImage.js';
 import removeOldUrl from '../helpers/removeOldUrl.js';
 import { Course, UserCourse, Video } from '../models/associations.js';
+import courseService from './courseService.js';
 
 class VideoService {
 
-    constructor( Video, Course, UserCourse ) {
+    constructor( Video, Course, UserCourse, courseService ) {
         this.videoModel = Video;
         this.courseModel = Course;
         this.userCourseModel = UserCourse;
+        this.courseService = courseService;
     }
     async addVideoToCourse(courseId, videoData, userId) {
         try {
@@ -18,7 +20,7 @@ class VideoService {
 
             const userCourses = await this.userCourseModel.findAll({ where: { courseId } });
             if (userCourses.length > 0) {
-                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
+                const courseWithVideos = await this.courseService.getCourseWithVideosAndProducts(courseId, userId);
                 const totalVideos = courseWithVideos.videos.length;
 
                 await Promise.all(userCourses.map(async (uc) => {
@@ -57,7 +59,7 @@ class VideoService {
 
             const userCourses = await this.userCourseModel.findAll({ where: { courseId } });
             if (userCourses.length > 0) {
-                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
+                const courseWithVideos = await this.courseService.getCourseWithVideosAndProducts(courseId, userId);
                 const totalVideos = courseWithVideos.videos.length;
 
                 await Promise.all(userCourses.map(async (uc) => {
@@ -83,4 +85,4 @@ class VideoService {
     }
 }
 
-export default new VideoService(Video, Course, UserCourse);
+export default new VideoService(Video, Course, UserCourse, courseService);

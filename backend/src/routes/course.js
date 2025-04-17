@@ -8,9 +8,9 @@ import authorizeAdmin from "../helpers/authorizeAdmin.js";
 import checkToken from "../helpers/check-token.js";
 import upload from "../helpers/upload.js";
 
-router.post("/create", authorizeAdmin, upload.single("image"), CourseController.createCourse.bind(CourseController)); //admin
+router.post("/", authorizeAdmin, upload.single("image"), CourseController.createCourse.bind(CourseController)); //admin
 
-router.get("/all", checkToken, CourseController.getAllCourses.bind(CourseController));
+router.get("/", checkToken, CourseController.getAllCourses.bind(CourseController));
 
 router.get("/:id", checkToken, CourseController.getCourseById.bind(CourseController));
 
@@ -22,7 +22,7 @@ router.get("/progress/incourse", checkToken, CourseController.getCoursesWithProg
 
 router.get("/progress/:id", checkToken, CourseController.getProgressInCourse.bind(CourseController));
 
-router.get("/users/progress/:id", authorizeAdmin, CourseController.getUserProgressInAllCoursesByUserId.bind(CourseController)); //admin
+router.get("/users/progress/:userId", authorizeAdmin, CourseController.getUserProgressInAllCoursesByUserId.bind(CourseController)); //admin
 
 router.post("/progress/:id", checkToken, CourseController.updateProgressInCourse.bind(CourseController));
 

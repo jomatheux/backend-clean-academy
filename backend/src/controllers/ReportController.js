@@ -11,7 +11,7 @@ class ReportController {
         const token = getToken(req);
         const user = await getUserByToken(token, req, res);
         const userId = user.id;
-        const testId = req.params.id;
+        const testId = req.params.testId;
         const receivedGrade = req.body.receivedGrade;
         const report = await this.reportService.registerAttempt(userId, testId, receivedGrade);
         res.json(report);

@@ -62,7 +62,7 @@ class TestController {
     async releaseTest(req, res) {
         const token = getToken(req);
         const user = await getUserByToken(token, req, res);
-        const courseId = req.params.id;
+        const courseId = req.params.courseId;
 
         const test = await this.testService.releaseTest(user.id, courseId);
         if (!test) return res.status(404).json("Teste não encontrado");
@@ -70,7 +70,7 @@ class TestController {
     }
 
     async getTestByCourseId(req, res) {
-        const courseId = req.params.id;
+        const courseId = req.params.courseId;
         const test = await Test.findAll({ where: { courseId } });
         if (!test) return res.status(404).json("Teste não encontrado");
         res.status(200).json(test);

@@ -171,7 +171,7 @@ class CourseController {
     }
 
     async getUserProgressInAllCoursesByUserId(req, res) {
-        const userId = req.params.id;
+        const userId = req.params.userId;
         const user = await User.findOne({ where: { id: userId }, raw: true });
         if (!user) return res.status(404).json({ message: 'Usuário não encontrado!' });
         user.password = undefined;

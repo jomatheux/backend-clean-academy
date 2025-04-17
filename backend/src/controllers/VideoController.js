@@ -12,7 +12,7 @@ class VideoController {
     }
 
     async addVideoToCourse(req, res) {
-        const courseId = req.params.id;
+        const courseId = req.params.courseId;
         const { title, duration, description } = req.body;
         const token = getToken(req);
         const user = await getUserByToken(token, req, res);

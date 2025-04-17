@@ -8,7 +8,7 @@ class ProductController {
     }
 
     async createProduct(req, res) {
-        const courseId = req.params.id;
+        const courseId = req.params.courseId;
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
@@ -64,8 +64,8 @@ class ProductController {
     }
 
     async getCourseProducts(req, res) {
-        const { id } = req.params;
-        const products = await Product.findAll({ where: { courseId: id } });
+        const { courseId } = req.params;
+        const products = await Product.findAll({ where: { courseId: courseId } });
         if (!products) return res.status(404).json("Nenhum produto encontrado.");
         res.json(products);
     }

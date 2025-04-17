@@ -8,7 +8,7 @@ import authorizeAdmin from "../helpers/authorizeAdmin.js";
 import checkToken from "../helpers/check-token.js";
 import upload from "../helpers/upload.js";
 
-router.post("/:id", authorizeAdmin, upload.fields([
+router.post("/:courseId", authorizeAdmin, upload.fields([
     { name: "image", maxCount: 1 },
     { name: "url", maxCount: 1 }]),
     VideoController.addVideoToCourse.bind(VideoController)); //admin
