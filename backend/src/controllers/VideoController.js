@@ -31,7 +31,7 @@ class VideoController {
 
     async deleteVideoFromCourse(req, res) {
         const { id } = req.params;
-        const video = await videoModel.findByPk(id);
+        const video = await this.videoModel.findByPk(id);
         if (!video) {
             return res.status(404).json({ error: 'Vídeo não encontrado!' });
         }

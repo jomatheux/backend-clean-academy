@@ -208,7 +208,7 @@
         }
       }
     },
-    "/courses/create": {
+    "/courses/": {
       "post": {
         "description": "",
         "parameters": [
@@ -245,9 +245,7 @@
             "description": "Internal Server Error"
           }
         }
-      }
-    },
-    "/courses/all": {
+      },
       "get": {
         "description": "",
         "responses": {
@@ -411,12 +409,12 @@
         }
       }
     },
-    "/courses/users/progress/{id}": {
+    "/courses/users/progress/{userId}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -448,7 +446,7 @@
         }
       }
     },
-    "/tests/create": {
+    "/tests/": {
       "post": {
         "description": "",
         "responses": {
@@ -459,9 +457,7 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/tests/all": {
+      },
       "get": {
         "description": "",
         "responses": {
@@ -512,9 +508,7 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/tests/update/{id}": {
+      },
       "patch": {
         "description": "",
         "parameters": [
@@ -568,12 +562,12 @@
         }
       }
     },
-    "/tests/releasetest/{id}": {
+    "/tests/releasetest/{courseId}": {
       "post": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "courseId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -589,12 +583,12 @@
         }
       }
     },
-    "/tests/getByCourseId/{id}": {
+    "/tests/getByCourseId/{courseId}": {
       "get": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "courseId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -623,12 +617,12 @@
         }
       }
     },
-    "/products/create/{id}": {
+    "/products/{courseId}": {
       "post": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "courseId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -662,7 +656,7 @@
         }
       }
     },
-    "/products/all": {
+    "/products/": {
       "get": {
         "description": "",
         "responses": {
@@ -694,30 +688,7 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/products/course/{id}": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "404": {
-            "description": "Not Found"
-          }
-        }
-      }
-    },
-    "/products/edit/{id}": {
+      },
       "patch": {
         "description": "",
         "parameters": [
@@ -751,9 +722,7 @@
             "description": "Not Found"
           }
         }
-      }
-    },
-    "/products/delete/{id}": {
+      },
       "delete": {
         "description": "",
         "parameters": [
@@ -774,12 +743,33 @@
         }
       }
     },
-    "/reports/generate/{id}": {
+    "/products/course/{courseId}": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "courseId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/reports/{testId}": {
       "post": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "testId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -804,7 +794,7 @@
         }
       }
     },
-    "/reports/get-report": {
+    "/reports/": {
       "get": {
         "description": "",
         "responses": {
@@ -814,12 +804,12 @@
         }
       }
     },
-    "/videos/{id}": {
+    "/videos/{courseId}": {
       "post": {
         "description": "",
         "parameters": [
           {
-            "name": "id",
+            "name": "courseId",
             "in": "path",
             "required": true,
             "type": "string"
@@ -851,7 +841,9 @@
             "description": "Internal Server Error"
           }
         }
-      },
+      }
+    },
+    "/videos/{id}": {
       "delete": {
         "description": "",
         "parameters": [

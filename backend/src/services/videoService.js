@@ -1,15 +1,16 @@
 import removeOldImage from '../helpers/removeOldImage.js';
 import removeOldUrl from '../helpers/removeOldUrl.js';
-import { Course, UserCourse, Video } from '../models/associations.js';
-import courseService from './courseService.js';
+import { Course, UserCourse, Video, Product, Test, Report } from '../models/associations.js';
 
 class VideoService {
 
-    constructor( Video, Course, UserCourse, courseService ) {
+    constructor( Video, Course, UserCourse, Product, Test, Report) {
         this.videoModel = Video;
         this.courseModel = Course;
         this.userCourseModel = UserCourse;
-        this.courseService = courseService;
+        this.productModel = Product;
+        this.testModel = Test;
+        this.reportModel = Report;
     }
     async addVideoToCourse(courseId, videoData, userId) {
         try {
@@ -20,7 +21,7 @@ class VideoService {
 
             const userCourses = await this.userCourseModel.findAll({ where: { courseId } });
             if (userCourses.length > 0) {
-                const courseWithVideos = await this.courseService.getCourseWithVideosAndProducts(courseId, userId);
+                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
                 const totalVideos = courseWithVideos.videos.length;
 
                 await Promise.all(userCourses.map(async (uc) => {
@@ -59,7 +60,7 @@ class VideoService {
 
             const userCourses = await this.userCourseModel.findAll({ where: { courseId } });
             if (userCourses.length > 0) {
-                const courseWithVideos = await this.courseService.getCourseWithVideosAndProducts(courseId, userId);
+                const courseWithVideos = await this.getCourseWithVideosAndProducts(courseId, userId);
                 const totalVideos = courseWithVideos.videos.length;
 
                 await Promise.all(userCourses.map(async (uc) => {
@@ -83,6 +84,48 @@ class VideoService {
             throw error;
         }
     }
+
+    async getCourseWithVideosAndProducts(courseId, userId) {
+        try {
+            const course = await this.courseModel.findByPk(courseId, {
+                include: [
+                    {
+                        model: this.videoModel,
+                        as: 'videos',
+                        attributes: ['id', 'title', 'url', 'duration', 'image', 'description'],
+                    },
+                    {
+                        model: this.productModel,
+                        as: 'products',
+                        attributes: ['id', 'name', 'description', 'image'],
+                    },
+                    {
+                        model: this.testModel,
+                        as: 'tests',
+                        attributes: ['id', 'questions', 'qntQuestions', 'minGrade'],
+                        include: [
+                            {
+                                model: this.reportModel,
+                                as: 'reports',
+                                where: { userId },
+                                required: false,
+                                attributes: ['id', 'grade', 'createdAt'],
+                            },
+                        ],
+                    },
+                ],
+            });
+
+            if (!course) {
+                return { error: 'Curso não encontrado.' };
+            }
+
+            return course;
+        } catch (error) {
+            console.error('Erro ao buscar vídeos do curso:', error);
+            throw error;
+        }
+    }
 }
 
-export default new VideoService(Video, Course, UserCourse, courseService);
+export default new VideoService(Video, Course, UserCourse, Product, Test, Report);
