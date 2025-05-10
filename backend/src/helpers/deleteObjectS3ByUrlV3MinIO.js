@@ -1,4 +1,4 @@
-import Minio from 'minio';
+import * as Minio from 'minio';
 
 // Configurar o Minio Client
 const minioClient = new Minio.Client({

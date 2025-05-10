@@ -6,7 +6,7 @@ import 'dotenv/config';
 import getToken from '../helpers/get-token.js'
 import createUserToken from '../helpers/create-user-token.js'
 import userService from '../services/userService.js';
-import removeOldImage from '../helpers/removeOldImage.js';
+import deleteObjectS3ByUrlV3MinIO from '../helpers/deleteObjectS3ByUrlV3MinIO.js';
 
 class UserController {
     constructor(userService) {
@@ -16,7 +16,7 @@ class UserController {
     async register(req, res) {
         const { name, email, cpf, role, password, confirmpassword } = req.body;
         let image = null;
-        if (req.file) image = `user/${req.file.filename}`;
+        if (req.file) image = `${process.env.MINIO_BUCKET_URL}/user/${req.file.filename}`;
 
         // validations
         if (!name) return res.status(422).json({ message: 'O nome é obrigatório!' });
@@ -48,7 +48,7 @@ class UserController {
                 image,
             });
 
-            await createUserToken(newUser, req, res);
+            res.status(201).json({ message: 'Usuário criado com sucesso!' });
         } catch (error) {
             res.status(500).json({ message: error });
         }
@@ -107,7 +107,7 @@ class UserController {
         let oldImage = user.image;
         let image = oldImage;
 
-        if (req.file) image = `user/${req.file.filename}`;
+        if (req.file) image = `${process.env.MINIO_BUCKET_URL}/user/${req.file.filename}`;
 
         // validations
         if (!name) return res.status(422).json({ message: 'O nome é obrigatório!' });
@@ -132,7 +132,7 @@ class UserController {
         }
 
         try {
-            if (image !== oldImage) removeOldImage(user);
+            if (image !== oldImage) deleteObjectS3ByUrlV3MinIO(oldImage);
 
             const updatedUser = await user.update({
                 name,

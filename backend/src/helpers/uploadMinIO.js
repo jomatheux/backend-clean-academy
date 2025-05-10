@@ -1,5 +1,5 @@
 import multer from 'multer';
-import Minio from 'minio';
+import * as Minio from 'minio'
 import path from 'path';
 import fs from 'fs/promises';
 import { fileURLToPath } from 'url';
@@ -9,9 +9,9 @@ const __dirname = path.dirname(__filename);
 
 // Configuração do Minio Client
 const minioClient = new Minio.Client({
-  endPoint: process.env.MINIO_ENDPOINT_URL || 'localhost',
-  port: parseInt(process.env.MINIO_PORT || '9000', 10),
-  useSSL: process.env.MINIO_USE_SSL === 'true' || false,
+  endPoint: process.env.MINIO_ENDPOINT_URL || 'minio',
+  port: parseInt(process.env.MINIO_PORT) || 9000,	
+  useSSL: false,
   accessKey: process.env.MINIO_ACCESS_KEY || 'minioadmin',
   secretKey: process.env.MINIO_SECRET_KEY || 'minioadmin',
 }); 
@@ -56,7 +56,7 @@ const uploadToMinio = async (req, file) => {
   const prefix = determineS3KeyPrefix(req);
   const key = prefix + file.filename;
   const fileContent = await fs.readFile(file.path);
-  const bucketName = process.env.MINIO_BUCKET_NAME || 'test-bucket';
+  const bucketName = process.env.MINIO_BUCKET_NAME || 'teste-up-clean';
 
   try {
     await minioClient.putObject(bucketName, key, fileContent, {

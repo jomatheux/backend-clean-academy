@@ -1,6 +1,7 @@
 import { where } from 'sequelize';
 import { User, Course, UserCourse } from '../models/associations.js'
 import removeOldImage from '../helpers/removeOldImage.js'
+import deleteObjectS3ByUrlV3MinIO from '../helpers/deleteObjectS3ByUrlV3MinIO.js';
 
 class UserService {
     constructor(userModel, courseModel, userCourseModel) {
@@ -40,7 +41,7 @@ class UserService {
             const deletedUser = user;
             const userCourse = await this.userCourseModel.findAll({ where: { userId: user.id } });
             if (user.image) {
-                removeOldImage(user);
+                deleteObjectS3ByUrlV3MinIO(user.image);
             }
             if (user) {
                 await user.destroy();

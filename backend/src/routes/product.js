@@ -2,11 +2,12 @@ import express from "express"
 const router = express.Router();
 import ProductController from "../controllers/ProductController.js"
 import upload from "../helpers/upload.js";
+import uploadMinIO from "../helpers/uploadMinIO.js";
 
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
 import checkToken from "../helpers/check-token.js";
 
-router.post('/:courseId', authorizeAdmin, upload.single("image"), (req, res, next) => {
+router.post('/:courseId', authorizeAdmin, uploadMinIO("image"), (req, res, next) => {
     const image = req.file;
     if (!image) {
         return res.status(400).json({ message: "Por favor, envie um arquivo." });
@@ -20,7 +21,7 @@ router.get('/:id', checkToken, ProductController.getProductById.bind(ProductCont
 
 router.get('/course/:courseId', checkToken, ProductController.getCourseProducts.bind(ProductController));
 
-router.patch('/:id', authorizeAdmin, upload.single("image"), ProductController.updateProduct.bind(ProductController)); //admin
+router.patch('/:id', authorizeAdmin, uploadMinIO("image"), ProductController.updateProduct.bind(ProductController)); //admin
 
 router.delete('/:id', authorizeAdmin, ProductController.deleteProduct.bind(ProductController)); //admin
 

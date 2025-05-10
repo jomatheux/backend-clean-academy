@@ -3,6 +3,7 @@ import getToken from "../helpers/get-token.js";
 import getUserByToken from "../helpers/get-user-by-token.js";
 import Video from "../models/Video.js";
 import removeOldUrl from "../helpers/removeOldUrl.js";
+import deleteObjectMinioByUrl from "../helpers/deleteObjectS3ByUrlV3MinIO.js";
 
 class VideoController {
 
@@ -17,8 +18,8 @@ class VideoController {
         const token = getToken(req);
         const user = await getUserByToken(token, req, res);
         let url = null;
-        if (req.files.url[0]) {
-            url = `video/${req.files.url[0].filename}`;
+        if (req.file) {
+            url = `${process.env.MINIO_BUCKET_URL}/video/${req.file.filename}`;
         }
 
         try {
@@ -47,14 +48,14 @@ class VideoController {
         const { title, duration, description } = req.body;
         let oldUrl = video.url;
         let url = oldUrl;
-        if (req.files.url[0]) {
-            url = `video/${req.files.url[0].filename}`;
+        if (req.file) {
+            url = `${process.env.MINIO_BUCKET_URL}/video/${req.file.filename}`;
         }
         const videoData = { title, url, description, duration };
         if (!video) {
             return res.status(404).json({ error: 'Vídeo não encontrado!' });
         }
-        if (url !== oldUrl) removeOldUrl(video);
+        if (url !== oldUrl) deleteObjectMinioByUrl(oldUrl);
         await video.update(videoData);
         res.status(200).json(video);
     }

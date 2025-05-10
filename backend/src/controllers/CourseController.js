@@ -2,6 +2,7 @@ import getToken from '../helpers/get-token.js';
 import getUserByToken from '../helpers/get-user-by-token.js';
 import removeOldImage from '../helpers/removeOldImage.js';
 import removeOldUrl from '../helpers/removeOldUrl.js';
+import deleteObjectMinioByUrl from '../helpers/deleteObjectS3ByUrlV3MinIO.js';
 import { User, Course, UserCourse, Video } from '../models/associations.js';
 import courseService from '../services/courseService.js';
 
@@ -16,7 +17,7 @@ class CourseController {
                 title: req.body.title,
                 description: req.body.description,
                 duration: req.body.duration,
-                image: `course/${req.file.filename}`,
+                image: `${process.env.MINIO_BUCKET_URL}/course/${req.file.filename}`,
                 level: req.body.level,
                 instructor: req.body.instructor,
             };
@@ -51,13 +52,13 @@ class CourseController {
         const oldImage = await Course.findByPk(id).then(c => c.image);
         let image = oldImage;
         if (req.file) {
-            image = `course/${req.file.filename}`;
+            image = `${process.env.MINIO_BUCKET_URL}/course/${req.file.filename}`;
         }
         const course = await Course.findByPk(id);
         if (!course) {
             return res.status(404).json({ error: 'Curso não encontrado!' });
         }
-        if (image !== oldImage) removeOldImage(course);
+        if (image !== oldImage) deleteObjectMinioByUrl(oldImage);
         await course.update({ title, description, duration, image, level, instructor });
         res.status(200).json(course);
     }
@@ -70,12 +71,12 @@ class CourseController {
         if (!course || !userCourse || !video) {
             return res.status(400).json({ error: 'Erro na deleção' });
         }
-        if (course.image) removeOldImage(course);
+        if (course.image) deleteObjectMinioByUrl(course.image);
         await course.destroy();
         await userCourse.map(uc => uc.destroy());
         await video.map(v => {
             if (v.image) removeOldImage(v);
-            if (v.url) removeOldUrl(v);
+            if (v.url) deleteObjectMinioByUrl(v.url);
             v.destroy();
         });
         res.status(204).send();
@@ -90,63 +91,6 @@ class CourseController {
         }
         const courses = await this.courseService.getCoursesWithProgressByUserId(user.id);
         res.json(courses);
-    }
-
-    async addVideoToCourse(req, res) {
-        const courseId = req.params.id;
-        const { title, duration, description } = req.body;
-        const token = getToken(req);
-        const user = await getUserByToken(token, req, res);
-        let url = null;
-        if (req.files.url[0]) {
-            url = `video/${req.files.url[0].filename}`;
-        }
-
-        try {
-            const video = await this.courseService.addVideoToCourse(courseId, { title, url, description, duration }, user.id);
-            res.status(201).json({ message: 'Vídeo adicionado com sucesso!', video });
-        } catch (error) {
-            res.status(500).json({ message: 'Erro ao adicionar vídeo', error });
-        }
-    }
-
-    async deleteVideoFromCourse(req, res) {
-        const { id } = req.params;
-        const video = await Video.findByPk(id);
-        if (!video) {
-            return res.status(404).json({ error: 'Vídeo não encontrado!' });
-        }
-        const token = getToken(req);
-        const user = await getUserByToken(token, req, res);
-        const deletedVideo = await this.courseService.deleteVideo(video.id, user.id);
-        res.status(204).send(deletedVideo);
-    }
-
-    async updateVideoFromCourse(req, res) {
-        const id = req.params.id;
-        const video = await Video.findByPk(id);
-        const { title, duration, description } = req.body;
-        let oldUrl = video.url;
-        let url = oldUrl;
-        if (req.files.url[0]) {
-            url = `video/${req.files.url[0].filename}`;
-        }
-        const videoData = { title, url, description, duration };
-        if (!video) {
-            return res.status(404).json({ error: 'Vídeo não encontrado!' });
-        }
-        if (url !== oldUrl) removeOldUrl(video);
-        await video.update(videoData);
-        res.status(200).json(video);
-    }
-
-    async getVideo(req, res) {
-        const { id } = req.params;
-        const video = await Video.findByPk(id);
-        if (!video) {
-            return res.status(404).json({ error: 'Vídeo não encontrado!' });
-        }
-        res.status(200).json(video);
     }
 
     async getProgressInCourse(req, res) {

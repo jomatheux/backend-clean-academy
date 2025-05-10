@@ -7,6 +7,7 @@ import UserController from "../controllers/UserController.js";
 import authorizeAdmin from "../helpers/authorizeAdmin.js";
 import checkToken from "../helpers/check-token.js";
 import upload from "../helpers/upload.js";
+import uploadMinIO from "../helpers/uploadMinIO.js";
 
 /**
  * @swagger
@@ -17,7 +18,7 @@ import upload from "../helpers/upload.js";
  *     summary: Registra um novo usuário
  *     description: Registra um novo usuário no sistema
  */
-router.post("/register", authorizeAdmin, upload.single("image"), UserController.register.bind(UserController)); //admin
+router.post("/register", authorizeAdmin, uploadMinIO("image"), UserController.register.bind(UserController)); //admin
 
 /**
  * @swagger
@@ -77,7 +78,7 @@ router.post("/auth", authorizeAdmin, async (req, res) => {
 router.patch(
     "/:id",
     authorizeAdmin,
-    upload.single("image"),
+    uploadMinIO("image"),
     UserController.editUserById.bind(UserController)); //admin
 
 /**

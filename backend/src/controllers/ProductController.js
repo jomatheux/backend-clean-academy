@@ -1,6 +1,7 @@
 import Product from "../models/Product.js";
 import productService from "../services/productService.js";
 import removeOldImage from "../helpers/removeOldImage.js";
+import deleteObjectMinioByUrl from "../helpers/deleteObjectS3ByUrlV3MinIO.js"
 
 class ProductController {
     constructor(productService) {
@@ -12,7 +13,7 @@ class ProductController {
         if (!courseId) return res.status(404).json("Curso não encontrado.");
         const { name, description } = await req.body;
         if (!name || !description) return res.status(400).json("Os dados do produto são obrigatórios.");
-        const image = `product/${req.file.filename}`;
+        const image = `${process.env.MINIO_BUCKET_URL}/product/${req.file.filename}`;
 
         const product = await this.productService.createProduct(courseId, { name, image, description });
         res.status(201).json(product);
@@ -38,7 +39,7 @@ class ProductController {
         let oldImage = await Product.findByPk(id).then(p => p.image);
         let image = oldImage;
         if (req.file) {
-            image = `product/${req.file.filename}`;
+            image = `${process.env.MINIO_BUCKET_URL}/product/${req.file.filename}`;
         }
         const data = { title, description, image };
         const product = await Product.findByPk(id);
@@ -46,7 +47,7 @@ class ProductController {
             return res.status(404).json({ error: 'Produto não encontrado!' });
         }
         if (image !== oldImage) {
-            removeOldImage(product);
+            deleteObjectMinioByUrl(oldImage);
         }
         const updatedProduct = await this.productService.updateProduct(id, data);
         if (!updatedProduct) return res.status(404).json("Produto não encontrado.");
@@ -57,7 +58,7 @@ class ProductController {
         const { id } = req.params;
         const product = await Product.findByPk(id);
         if (!product) return res.status(404).json({ error: 'Produto não encontrado!' });
-        removeOldImage(product);
+        deleteObjectMinioByUrl(product.image);
         const deletedProduct = await this.productService.deleteProduct(id);
         if (!deletedProduct) return res.status(404).json("Produto não encontrado.");
         res.status(204).send();

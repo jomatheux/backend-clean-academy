@@ -1,6 +1,7 @@
 import removeOldImage from '../helpers/removeOldImage.js';
 import removeOldUrl from '../helpers/removeOldUrl.js';
 import { Course, UserCourse, Video, Product, Test, Report } from '../models/associations.js';
+import deleteObjectMinioByUrl from "../helpers/deleteObjectS3ByUrlV3MinIO.js"
 
 class VideoService {
 
@@ -54,7 +55,7 @@ class VideoService {
             const courseId = video.courseId;
 
             removeOldImage(video);
-            removeOldUrl(video);
+            deleteObjectMinioByUrl(video.url);
             await video.destroy();
             console.log('Vídeo deletado com sucesso!');
 
